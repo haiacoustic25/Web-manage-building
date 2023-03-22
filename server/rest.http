@@ -1,0 +1,10 @@
+POST http://localhost:3000/api/user/resgister
+Content-Type: application/json
+
+{
+    "name":"Ho Minh Hai",
+    "address":"Tan Ky, Nghe An",
+    "phone":"0328641477",
+    "username":"admin",
+    "password":"admin"
+}

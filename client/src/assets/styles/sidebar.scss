@@ -1,0 +1,19 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 60px);
+  //   min-width: 159px;
+  width: 13%;
+  &__menu {
+    background-color: #f7f7f7;
+    padding-top: 15px;
+    height: 100%;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .sidebar {
+    width: auto;
+    // min-width: none;
+  }
+}

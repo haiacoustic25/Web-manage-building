@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id String @id 
+  name String
+  avatar String
+  phone String
+  city String
+  district String
+  ward String 
+  citizenIdentificationNumber String
+  email String?
+  dateOfEntry DateTime @default(now())
+  roomId String
+  room Room @relation(fields: [roomId], references: [id])
+}
+
+model Report {
+  id String @id
+  roomId String
+  room Room @relation(fields: [roomId], references: [id])
+  startDate DateTime
+  endDate DateTime
+  totalPayment Float
+  electricFee Float
+  domesticWaterFee Float
+}
+
+model Room {
+  id String @id 
+  name String 
+  status Int @default(0) // default 0: empty, 1:hired 2//editing
+  amountOfPeople Int?
+  payment Float
+  area Float?
+  customers Customer[]
+  reports Report[]
+  buildingId String
+  electricNumber Float?
+  motorbikeAmount Int?
+  domesticWaterFee Float?
+  building Building @relation(fields: [buildingId],references: [id])
+}
+
+model Building {
+  id String @id 
+  city String
+  district String
+  ward String
+  userId String 
+  user User @relation(fields: [userId], references: [id])
+  amountRooms Int
+  // status Int @default(0) // default 0: empty, 1:hired
+  rooms Room[]
+}
+
+
+model User {
+  id String @id 
+  avatar String
+  name String 
+  city String
+  district String
+  ward String 
+  phone String 
+  username String @unique 
+  password String @unique 
+  role Int @default(1) //default 0: admin 1: customer
+  status Int @default(0) //default 0: non-active 1: active;
+  approveBy String? 
+  createAt DateTime @default(now())
+  buildings Building[]
+}
