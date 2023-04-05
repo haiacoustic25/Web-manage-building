@@ -4,7 +4,6 @@ import axiosBaseQuery, { BASE_URL } from './axiosBaseQuery';
 
 export const authApi = createApi({
   reducerPath: 'authApi',
-  keepUnusedDataFor: 1,
   baseQuery: axiosBaseQuery({
     baseUrl: BASE_URL,
   }),
@@ -27,25 +26,7 @@ export const authApi = createApi({
         }
       },
     }),
-    getAllBuilding: build.query({
-      query: (body) => {
-        console.log({ body });
-        try {
-          return {
-            url: '/building/getAllBuildingsByUserId',
-            method: 'POST',
-            // data: body,
-          };
-        } catch (error: any) {
-          throw new CustomError(error.message);
-        }
-      },
-      // providesTags: (result: BuildingType[]) =>
-      //   result
-      //     ? [...result.map(({ id }) => ({ type: 'Building' as const, id })), 'Building']
-      //     : ['Building'],
-    }),
   }),
 });
 
-export const { useLoginMutation, useGetAllBuildingQuery } = authApi;
+export const { useLoginMutation } = authApi;

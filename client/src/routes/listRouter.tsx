@@ -1,40 +1,44 @@
 // import { Login } from "";
-import { RouterType } from "../types/RouterType";
+import { RouterType } from '../types/RouterType';
 
-import { lazy } from "react";
+import { lazy } from 'react';
 
-const Login = lazy(() =>
-  import("../modules/login").then(({ Login }) => ({ default: Login }))
-);
-const BuildingComponent = lazy(() =>
-  import("../modules/buildings").then(({ BuildingComponent }) => ({
-    default: BuildingComponent,
+const Login = lazy(() => import('../modules/login').then(({ Login }) => ({ default: Login })));
+
+const RoomComponent = lazy(() =>
+  import('../modules/rooms').then(({ RoomComponent }) => ({
+    default: RoomComponent,
   }))
 );
 const UserComponent = lazy(() =>
-  import("../modules/users").then(({ UserComponent }) => ({
+  import('../modules/customer').then(({ UserComponent }) => ({
     default: UserComponent,
   }))
 );
 const StatisticalComponent = lazy(() =>
-  import("../modules/statistical").then(({ StatisticalComponent }) => ({
+  import('../modules/statistical').then(({ StatisticalComponent }) => ({
     default: StatisticalComponent,
+  }))
+);
+const DashboardComponent = lazy(() =>
+  import('../modules/dashboard').then(({ DashboardComponent }) => ({
+    default: DashboardComponent,
   }))
 );
 
 export const url = {
-  login: "/login",
-  statistical: "/statistical",
-  buildingManager: "/building-manager",
-  userManager: "/user-manager",
+  login: '/login',
+  dashboard: '/',
+  statistical: '/statistical',
+  userManager: '/user-manager',
+  roomManager: '/room',
 };
 
-export const RouterPublic: RouterType[] = [
-  { url: url.login, element: <Login /> },
-];
+export const RouterPublic: RouterType[] = [{ url: url.login, element: <Login /> }];
 
 export const RouterAdmin: RouterType[] = [
   { url: url.statistical, element: <StatisticalComponent /> },
-  { url: url.buildingManager, element: <BuildingComponent /> },
   { url: url.userManager, element: <UserComponent /> },
+  { url: url.roomManager, element: <RoomComponent /> },
+  { url: url.dashboard, element: <DashboardComponent /> },
 ];

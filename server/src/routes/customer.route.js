@@ -17,7 +17,7 @@ const customerController = require('../controllers/customer.controller');
 const router = express.Router();
 
 router.post('/create', verifyToken, upload.single('file'), customerController.create);
-// router.post("/getAllBuildingsByUserId", customerController.getAllBuildings);
+router.post('/getAllCustomer', verifyToken, customerController.getAllCustomer);
 // router.post("/update", customerController.update);
 // router.delete("/delete", customerController.deleteBuilding);
 

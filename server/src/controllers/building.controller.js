@@ -22,22 +22,25 @@ const create = async (req, res) => {
 
     const result = await BuildingModel.create({ data: building });
 
+    const formatNameRoom = (index) => {
+      if (index < 10) return `00${index}`;
+      if (index < 100) return `0${index}`;
+      return index;
+    };
+
     const dataRooms = [];
     for (let i = 0; i < amountRooms; i++) {
       const idRooms = uuidv4();
       dataRooms.push({
         id: idRooms,
-        name: `Phòng ${i + 1}`,
+        name: `Phòng ${formatNameRoom(i + 1)}`,
         amountOfPeople: 0,
         payment: 0,
         area: 0,
         buildingId: id,
-        electricNumber: 0,
         motorbikeAmount: 0,
-        domesticWaterFee: 0,
       });
     }
-    console.log({ dataRooms });
     const createRooms = await RoomModel.createMany({ data: dataRooms });
     if (!result || !createRooms) return res.status(500).json({ success: false });
 
@@ -50,8 +53,15 @@ const create = async (req, res) => {
 
 const getAllBuildings = async (req, res) => {
   const { userId, pageIndex, city, district, ward, pageSize } = req.body;
-  console.log({ userId, pageIndex, city, district, ward, pageSize });
   try {
+    const totalRow = await prisma.$queryRaw`
+      SELECT COUNT(id) as totalRow
+      FROM manage_building.building
+      WHERE userId = ${userId}
+      AND (${city || null} is null or city = ${city})
+      AND (${district || null} is null or district = ${district})
+      AND (${ward || null} is null or ward = ${ward})
+    `;
     const result = await prisma.$queryRaw`
       SELECT *
       FROM manage_building.building
@@ -59,11 +69,17 @@ const getAllBuildings = async (req, res) => {
       AND (${city || null} is null or city = ${city})
       AND (${district || null} is null or district = ${district})
       AND (${ward || null} is null or ward = ${ward})
+      ORDER BY createAt DESC
       LIMIT ${pageSize} OFFSET ${pageSize * (pageIndex - 1)}
       `;
-    if (!result) return res.status(500).json({ success: false });
+    if (!result) return res.status(201).json({ success: false });
 
-    return res.status(200).json({ success: true, message: 'Get all buildings', data: result });
+    return res.status(200).json({
+      success: true,
+      message: 'Get all buildings',
+      data: result,
+      totalRow: Number(totalRow[0].totalRow),
+    });
   } catch (error) {
     console.log({ error });
     return res.status(500).json({ error: error });
@@ -71,7 +87,7 @@ const getAllBuildings = async (req, res) => {
 };
 
 const update = async (req, res) => {
-  const { id, city, district, ward } = req.body;
+  const { id, city, district, ward, amountRooms } = req.body;
   try {
     const result = await BuildingModel.update({
       where: { id },
@@ -79,6 +95,7 @@ const update = async (req, res) => {
         city,
         district,
         ward,
+        amountRooms,
       },
     });
 
@@ -96,14 +113,13 @@ const update = async (req, res) => {
 };
 
 const deleteBuilding = async (req, res) => {
-  const { listBuildings } = req.body;
-  console.log({ listBuildings });
+  const { buildingId } = req.body;
   try {
-    const result = await BuildingModel.deleteMany({
-      where: { id: { in: listBuildings } },
+    const result = await BuildingModel.delete({
+      where: { id: buildingId },
     });
 
-    if (!result) return res.status(500).json({ success: false });
+    if (!result) return res.status(201).json({ success: false });
 
     return res.status(200).json({
       success: true,
@@ -111,6 +127,7 @@ const deleteBuilding = async (req, res) => {
       //   data: result,
     });
   } catch (error) {
+    console.log({ error });
     return res.status(500).json({ error: error });
   }
 };

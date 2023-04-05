@@ -1,8 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const jwt = require('jsonwebtoken');
-const argon = require('argon2');
 const { parseJwt } = require('../utils');
-const { v4: uuidv4 } = require('uuid');
+const argon = require('argon2');
 
 const prisma = new PrismaClient();
 const UserModel = prisma.user;
@@ -15,10 +14,9 @@ const login = async (req, res) => {
   try {
     const user = await UserModel.findUnique({ where: { username } });
     // console.log({ user });
-    if (!user) return res.status(200).json({ success: false, message: 'Username do not exist!' });
+    if (!user) return res.status(201).json({ success: false, message: 'Username do not exist!' });
 
     const pass = await argon.verify(user.password, password);
-    console.log({ pass });
     if (!pass) {
       return res.status(200).json({ success: false, message: 'Wrong password' });
     }

@@ -5,11 +5,15 @@ CREATE TABLE `Customer` (
     `avatar` VARCHAR(191) NOT NULL,
     `phone` VARCHAR(191) NOT NULL,
     `city` VARCHAR(191) NOT NULL,
+    `gender` INTEGER NOT NULL,
+    `username` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
     `district` VARCHAR(191) NOT NULL,
     `ward` VARCHAR(191) NOT NULL,
     `citizenIdentificationNumber` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NULL,
     `dateOfEntry` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `status` INTEGER NOT NULL DEFAULT 0,
     `roomId` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -22,8 +26,11 @@ CREATE TABLE `Report` (
     `startDate` DATETIME(3) NOT NULL,
     `endDate` DATETIME(3) NOT NULL,
     `totalPayment` DOUBLE NOT NULL,
+    `payment` DOUBLE NOT NULL,
     `electricFee` DOUBLE NOT NULL,
     `domesticWaterFee` DOUBLE NOT NULL,
+    `electricNumber` DOUBLE NULL,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -36,10 +43,9 @@ CREATE TABLE `Room` (
     `amountOfPeople` INTEGER NULL,
     `payment` DOUBLE NOT NULL,
     `area` DOUBLE NULL,
+    `electricityPrice` DOUBLE NULL,
     `buildingId` VARCHAR(191) NOT NULL,
-    `electricNumber` DOUBLE NULL,
     `motorbikeAmount` INTEGER NULL,
-    `domesticWaterFee` DOUBLE NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -52,6 +58,8 @@ CREATE TABLE `Building` (
     `ward` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `amountRooms` INTEGER NOT NULL,
+    `status` INTEGER NOT NULL DEFAULT 0,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -78,13 +86,13 @@ CREATE TABLE `User` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Customer` ADD CONSTRAINT `Customer_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Customer` ADD CONSTRAINT `Customer_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Report` ADD CONSTRAINT `Report_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Report` ADD CONSTRAINT `Report_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Room` ADD CONSTRAINT `Room_buildingId_fkey` FOREIGN KEY (`buildingId`) REFERENCES `Building`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Room` ADD CONSTRAINT `Room_buildingId_fkey` FOREIGN KEY (`buildingId`) REFERENCES `Building`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Building` ADD CONSTRAINT `Building_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

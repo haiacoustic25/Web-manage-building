@@ -1,0 +1,53 @@
+.avtp__wrapper {
+  &--container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &.circle {
+      border-radius: 50%;
+      // border: 1px solid #333333;
+    }
+    &.default {
+      border-radius: 4px;
+    }
+    &:hover {
+      & .avtp__wrapper--icon.hasImg {
+        display: flex;
+      }
+      & .avtp__wrapper--image,
+      .avtp__wrapper--avtDefault {
+        opacity: 0.5;
+      }
+    }
+  }
+  &--image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    & > img {
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+  &--icon {
+    z-index: 1000;
+    display: flex;
+    gap: 10px;
+    &.hasImg {
+      display: none;
+    }
+  }
+  &--remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  &--avtDefault {
+    position: absolute;
+    top: 0;
+    left: 0;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+}

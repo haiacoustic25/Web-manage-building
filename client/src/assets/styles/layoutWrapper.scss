@@ -3,7 +3,27 @@
   &__content {
     flex: 1;
     background: #ffffff;
+
     padding: 20px;
+    overflow-y: scroll;
+    height: calc(100vh - 100px);
+
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+      background-color: #f5f5f5;
+    }
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      background-color: #f5f5f5;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      background-color: #c1c1c1;
+    }
   }
   &__container {
     display: flex;
@@ -11,6 +31,7 @@
 }
 
 .header {
+  background: #fff;
   height: 60px;
   display: flex;
   justify-content: space-between;
@@ -19,6 +40,19 @@
   box-shadow: 2px 3px 2px #dbdbdb;
   position: relative;
   z-index: 100;
+  .line-hr {
+    height: 30px;
+    border: 1px solid #f2f2f2;
+    margin: 0 20px;
+  }
+  &__left {
+    display: flex;
+    align-items: center;
+    a {
+      padding: 10px 5px;
+      color: #636161;
+    }
+  }
   &__logo {
     width: 100px;
     // padding: 15px 0;
@@ -50,7 +84,7 @@
       img {
         width: 100%;
         height: 100%;
-        object-fit: contain;
+        object-fit: cover;
       }
     }
   }
@@ -60,11 +94,35 @@
   border-bottom: 1px solid;
 }
 
-.ant-modal-footer {
-  border-top: 1px solid;
-  padding-top: 10px;
-}
-
 :where(.css-dev-only-do-not-override-1me4733).ant-modal .ant-modal-content {
   padding: 20px 24px 10px 24px;
+}
+
+.ant-table-body {
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #c1c1c1;
+  }
+}
+
+.rowClassName1 td:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.rowClassName1 td:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }

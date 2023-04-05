@@ -1,5 +1,6 @@
 import React from 'react';
 import { RootState, store, useAppSelector } from '../redux/store';
+import '../assets/styles/layoutWrapper.scss';
 
 const renderComponentWithConfig = (WrappedComponent: any) => {
   const access_token = store.getState().dataUser.access_token;

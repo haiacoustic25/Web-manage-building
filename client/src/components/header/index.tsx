@@ -1,18 +1,20 @@
-import logo from '../../assets/img/logo.png';
-import { DownOutlined, LogoutOutlined } from '@ant-design/icons';
+import { DownOutlined, LogoutOutlined, DashboardOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Dropdown, Space } from 'antd';
-import { useAppDispatch } from '../../redux/store';
-import authSlice, { logout } from '../../redux/reducer/authReducer';
-import renderComponentWithConfig from '../../HOC/component-with-config';
+import { Dropdown } from 'antd';
 import { toast } from 'react-toastify';
+import renderComponentWithConfig from '../../HOC/component-with-config';
+import logo from '../../assets/img/logo.png';
 import { BASE_URL_AVT } from '../../constants/config';
+import { logout } from '../../redux/reducer/authReducer';
+import { useAppDispatch } from '../../redux/store';
+import { Link } from 'react-router-dom';
 
 type Props = {
   user: any;
+  hasToDashboard?: boolean;
 };
 
-const Header = ({ user }: Props) => {
+const Header = ({ user, hasToDashboard = true }: Props) => {
   const dispatch = useAppDispatch();
   // const location = useLocation();
   const handleLogout = () => {
@@ -21,7 +23,6 @@ const Header = ({ user }: Props) => {
     // navigation(url.login);
     // localStorage.removeItem("persist:root");
   };
-  console.log({ user });
   const items: MenuProps['items'] = [
     {
       key: '1',
@@ -38,10 +39,25 @@ const Header = ({ user }: Props) => {
 
   return (
     <div className="header">
-      <div className="header__logo">
-        <img src={logo} alt="" />
+      <div className="header__left">
+        {hasToDashboard && (
+          <>
+            <Link to="/">
+              <DashboardOutlined />
+            </Link>
+            <div className="line-hr"></div>
+          </>
+        )}
+        <div className="header__logo">
+          <img src={logo} alt="" />
+        </div>
       </div>
-      <Dropdown menu={{ items }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
+      <Dropdown
+        menu={{ items }}
+        placement="bottomRight"
+        arrow={{ pointAtCenter: true }}
+        trigger={['click']}
+      >
         <div className="header__avt">
           <DownOutlined style={{ fontSize: '10px' }} />
           {/* <span>Ho Minh Hai</span> */}

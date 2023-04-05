@@ -27,19 +27,6 @@ const authSlice = createSlice({
       state.access_token = action.payload.token;
     },
   },
-  // extraReducers: (builder) => {
-  //   builder.addCase(login.pending, (state) => {
-  //     state.status = APISTATUS.LOADING;
-  //   });
-  //   builder.addCase(login.fulfilled, (state, action: PayloadAction<AnyAction>) => {
-  //     state.user = action.payload.data;
-  //     state.status = APISTATUS.SUCCESS;
-  //     state.access_token = action.payload.token;
-  //   });
-  //   builder.addCase(login.rejected, (state) => {
-  //     state.status = APISTATUS.ERROR;
-  //   });
-  // },
 });
 
 export const { logout, login } = authSlice.actions;

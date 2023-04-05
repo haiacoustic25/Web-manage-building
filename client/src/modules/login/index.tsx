@@ -21,7 +21,7 @@ export const Login = () => {
   useEffect(() => {
     if (isSuccess) {
       dispatch(login(data));
-      navigation(url.statistical);
+      navigation(url.dashboard);
       toast.success('Đăng nhập thành công');
     }
     if (isError) {

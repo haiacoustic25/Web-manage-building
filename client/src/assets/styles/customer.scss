@@ -1,0 +1,38 @@
+.ms {
+  width: 100%;
+  height: 100%;
+
+  &__table {
+    background: #ffffff;
+    margin-top: 10px;
+    height: calc(100vh - 152px);
+    padding: 0 10px;
+    &--name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    &--img {
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      & img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    }
+  }
+}
+
+.customer-search {
+  padding: 10px;
+}
+.customer-content {
+  margin-top: 20px;
+  text-align: end;
+  &__add {
+    margin-bottom: 10px;
+  }
+}

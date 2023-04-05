@@ -4,11 +4,17 @@ const prisma = new PrismaClient();
 const RoomModel = prisma.room;
 
 const getAllRooms = async (req, res) => {
-  const { buildingId } = req.body;
+  const { buildingId, priceFrom, priceTo, areaFrom, areaTo, status } = req.body;
   try {
     const result = await prisma.$queryRaw`
         SELECT * FROM manage_building.room 
         WHERE buildingId = ${buildingId}
+        AND (${priceFrom || null} is null or payment >= ${priceFrom})
+        AND (${priceTo || null} is null or payment <= ${priceTo})
+        AND (${areaFrom || null} is null or area >= ${areaFrom})
+        AND (${areaTo || null} is null or area <= ${areaTo})
+        AND (${status || null} is null or status = ${status})
+        ORDER BY name,id,buildingId ASC
     `;
 
     if (!result) return res.status(500).json({ success: false });
@@ -19,21 +25,20 @@ const getAllRooms = async (req, res) => {
   }
 };
 const update = async (req, res) => {
-  const { id, payment, area, electricNumber, motorbikeAmount, domesticWaterFee, status } = req.body;
+  const { id, payment, area, motorbikeAmount, electricityPrice } = req.body;
   try {
     const result = await RoomModel.update({
       where: { id },
       data: {
         payment,
         area,
-        electricNumber,
+        electricityPrice,
         motorbikeAmount,
-        domesticWaterFee,
-        status,
+        // status,
       },
     });
 
-    if (!result) return res.status(500).json({ success: false });
+    if (!result) return res.status(201).json({ success: false });
 
     return res.status(200).json({
       success: true,

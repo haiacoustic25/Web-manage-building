@@ -8,3 +8,10 @@ export const displayAddress = (value: any) => {
 
   return `${ward?.Name} - ${district?.Name} - ${city?.Name}`;
 };
+
+export const formatMoney = (money: any) => {
+  return money.toLocaleString('it-IT', {
+    style: 'currency',
+    currency: 'VND',
+  });
+};
