@@ -25,17 +25,6 @@ export const customerApi = createApi({
         }
       },
       providesTags(result) {
-        /**
-         * Cái callback này sẽ chạy mỗi khi getPosts chạy
-         * Mong muốn là sẽ return về một mảng kiểu
-         * ```ts
-         * interface Tags: {
-         *    type: "Posts";
-         *    id: string;
-         *  }[]
-         *```
-         * vì thế phải thêm as const vào để báo hiệu type là Read only, không thể mutate
-         */
         if (result) {
           const final = [
             ...result.data.map(() => ({ type: 'Customer' as const })),
@@ -43,11 +32,10 @@ export const customerApi = createApi({
           ];
           return final;
         }
-        // const final = [{ type: 'Customer' as const, id: 'LIST' }]
-        // return final
         return [{ type: 'Customer' }];
       },
     }),
+
     addCustomer: build.mutation({
       query: (body) => {
         try {
@@ -62,7 +50,40 @@ export const customerApi = createApi({
       },
       invalidatesTags: (result, error, body) => (error ? [] : [{ type: 'Customer' }]),
     }),
+    removeCustomer: build.mutation({
+      query: (body) => {
+        try {
+          return {
+            url: '/customer/remove',
+            method: 'POST',
+            data: body,
+          };
+        } catch (error: any) {
+          throw new CustomError(error.message);
+        }
+      },
+      invalidatesTags: (result, error, body) => (error ? [] : [{ type: 'Customer' }]),
+    }),
+    updateCustomer: build.mutation({
+      query: (body) => {
+        try {
+          return {
+            url: '/customer/update',
+            method: 'POST',
+            data: body,
+          };
+        } catch (error: any) {
+          throw new CustomError(error.message);
+        }
+      },
+      invalidatesTags: (result, error, body) => (error ? [] : [{ type: 'Customer' }]),
+    }),
   }),
 });
 
-export const { useGetAllCustomerQuery, useAddCustomerMutation } = customerApi;
+export const {
+  useGetAllCustomerQuery,
+  useAddCustomerMutation,
+  useRemoveCustomerMutation,
+  useUpdateCustomerMutation,
+} = customerApi;

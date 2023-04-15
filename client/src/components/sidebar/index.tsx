@@ -1,11 +1,15 @@
-import { BarChartOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  AccountBookOutlined,
+  BarChartOutlined,
+  HomeOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import renderComponentWithConfig from '../../HOC/component-with-config';
 import '../../assets/styles/sidebar.scss';
-import { useAppDispatch } from '../../redux/store';
 import { url } from '../../routes/listRouter';
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -32,6 +36,7 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem('Thống kê', '0', <BarChartOutlined />),
+  getItem('Quản lý hóa đơn', 'sub3', <AccountBookOutlined />, [getItem('Quản lý hóa đơn', '5')]),
   getItem('Quản lý phòng trọ', 'sub1', <HomeOutlined />, [getItem('Quản lý phòng trọ', '1')]),
   getItem('Quản lý người thuê', 'sub2', <UserOutlined />, [
     getItem('Quản lý người đang thuê', '3'),
@@ -56,8 +61,13 @@ const arrContent: ArrContent[] = [
   },
   {
     key: 4,
-    url: url.userManager,
+    url: url.userNonActiveManager,
     sub: 'sub2',
+  },
+  {
+    key: 5,
+    url: url.reportManager,
+    sub: 'sub3',
   },
 ];
 
@@ -67,8 +77,6 @@ const Sidebar = () => {
     if (x < 1200) return true;
     return false;
   });
-  // const [collapsed, setCollapsed] = useState(false);
-  const dispatch = useAppDispatch();
   const location = useLocation();
   const navigation = useNavigate();
   useEffect(() => {
@@ -89,7 +97,7 @@ const Sidebar = () => {
   };
   const selectedKey = useMemo(() => {
     // console.log(location.pathname);
-    const item = arrContent.find((item) => location.pathname.includes(item.url));
+    const item = arrContent.find((item) => location.pathname == item.url);
     if (item) {
       return item.key;
     }
@@ -99,7 +107,7 @@ const Sidebar = () => {
 
   const selectedSub = useMemo(() => {
     // console.log(location.pathname);
-    const item = arrContent.find((item) => location.pathname.includes(item.url));
+    const item = arrContent.find((item) => location.pathname == item.url);
     if (item && item.sub) {
       return item.sub;
     }

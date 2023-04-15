@@ -18,4 +18,5 @@ export type RoomType = {
   electricNumber: String;
   motorbikeAmount: Number;
   domesticWaterFee: Number;
+  floor: string;
 };

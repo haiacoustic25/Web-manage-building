@@ -24,7 +24,7 @@ model Customer {
   citizenIdentificationNumber String
   email String?
   dateOfEntry DateTime @default(now())
-  status Int @default(0) // default 0: active, 1:non-active
+  status Int @default(1) // default 1: active, 2:non-active
   roomId String
   room Room @relation(fields: [roomId], references: [id],onDelete: Cascade,onUpdate: Cascade )
 }
@@ -33,12 +33,14 @@ model Report {
   id String @id
   roomId String
   room Room @relation(fields: [roomId], references: [id],onDelete: Cascade)
-  startDate DateTime
-  endDate DateTime
   totalPayment Float
   payment Float
+  environmentFee Float
+  status Int @default(1) // 1:non-active, 2 :active
+  internetFee Float?
   electricFee Float
   domesticWaterFee Float
+  domesticWaterNumber Float
   electricNumber Float?
   createAt DateTime @default(now())
 }
@@ -46,15 +48,22 @@ model Report {
 model Room {
   id String @id 
   name String 
-  status Int @default(0) // default 0: empty, 1:hired 2//editing
+  status Int @default(1) // default 1: empty, 1:hired 2//editing
   amountOfPeople Int?
   payment Float
   area Float?
-  electricityPrice Float?
+  floor String?
+  electricFee Float?
+  domesticWaterFee Float?
+  internetFee Float?
+  environmentFee Float?
   customers Customer[]
   reports Report[]
   buildingId String
   motorbikeAmount Int?
+  dateStart DateTime?
+  dateEnd DateTime?
+  furniture String?
   building Building @relation(fields: [buildingId],references: [id],onDelete: Cascade, onUpdate: Cascade)
 }
 
@@ -66,8 +75,9 @@ model Building {
   userId String 
   user User @relation(fields: [userId], references: [id])
   amountRooms Int
-  status Int @default(0) // default 0: empty, 1:hired
+  status Int @default(1) // default 1: empty, 2:hired
   rooms Room[]
+  numberOfFloors Int 
   createAt DateTime @default(now())
 }
 
@@ -83,7 +93,7 @@ model User {
   username String @unique 
   password String @unique 
   role Int @default(1) //default 0: admin 1: customer
-  status Int @default(0) //default 0: non-active 1: active;
+  status Int @default(1) //default 1: non-active 2: active;
   approveBy String? 
   createAt DateTime @default(now())
   buildings Building[]

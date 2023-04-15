@@ -1,0 +1,131 @@
+.payment__wrapper {
+  //   width: 100%;
+  height: calc(100vh - 60px);
+  margin-top: 60px;
+}
+.payment {
+  height: 100%;
+
+  margin: -24px;
+  &__container {
+    background: #f1f1f1;
+    display: flex;
+    position: relative;
+    height: calc(100% - 60px);
+  }
+  &__sidebar {
+    position: relative;
+    background: #f8f8f8;
+    z-index: 200;
+    display: flex;
+    width: 60px;
+    border-right: 1px solid #dadada;
+    // text-align: center;
+    height: 100%;
+    &--icon {
+      margin: 0 auto;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      &.active {
+        border: 1px solid #2ea2c7;
+        border-radius: 8px;
+      }
+    }
+  }
+  &__position {
+    width: 300px;
+    height: 100%;
+    background: #fff;
+    position: absolute;
+    transform: translateX(390px);
+    -webkit-transform: translateX(-350px);
+    -moz-transform: translateX(390px);
+    transition: transform ease-out 200ms;
+    -webkit-transition: transform ease-out 200ms;
+    -moz-transition: transform ease-out 200ms;
+    top: 0px;
+    left: 60px;
+    z-index: 98;
+    &.active {
+      transform: translateX(0px);
+      -webkit-transform: translateX(0px);
+    }
+    .title {
+      min-height: 49px;
+      font-size: 15px;
+      line-height: 49px;
+      color: #333333;
+      font-weight: bold;
+      text-transform: uppercase;
+      background: #f3f3f3;
+      text-align: center;
+    }
+    .close {
+      cursor: pointer;
+      position: absolute;
+      width: 30px;
+      height: 49px;
+      background: transparent url(../img/close-sidebar-icon.png) left center no-repeat;
+      top: 0px;
+      right: -30px;
+      -moz-transform: scaleX(-1);
+      -o-transform: scaleX(-1);
+      -webkit-transform: scaleX(-1);
+      transform: scaleX(-1);
+      filter: FlipH;
+      -ms-filter: 'FlipH';
+    }
+  }
+  &__infor {
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    .item {
+      display: flex;
+      gap: 10px;
+      // align-items: center;
+      font-size: 14px;
+      .label {
+        font-size: 14px;
+        width: 100px;
+        // font-weight: 700;
+      }
+      p {
+        margin-bottom: 5px;
+      }
+    }
+  }
+  &__form {
+    flex: 1;
+    height: 100%;
+    &--container {
+      padding: 10px 20px;
+      // margin-top: -10px;
+      background: #fff;
+      height: 100%;
+      width: 500px;
+      margin: 0px auto;
+    }
+  }
+  &__button {
+    padding-left: 60px;
+    position: relative;
+    z-index: 100;
+    padding-bottom: 10px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-top: 1px solid #dbdbdb;
+    // box-shadow: 2px 3px 2px #dbdbdb;
+  }
+}
+:where(.css-dev-only-do-not-override-1me4733).ant-drawer .ant-drawer-header-title {
+  flex-direction: row-reverse;
+}

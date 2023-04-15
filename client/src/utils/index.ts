@@ -1,5 +1,4 @@
 import { APIAddress } from '../constants/APIAdress';
-import { UserType } from '../types/UserType';
 
 export const displayAddress = (value: any) => {
   const city: any = APIAddress.find((item: any) => item.Id == value?.city);
@@ -14,4 +13,15 @@ export const formatMoney = (money: any) => {
     style: 'currency',
     currency: 'VND',
   });
+};
+
+export const percent = (value: number, total: number) => {
+  return ((value * 100) / total).toFixed(0);
+};
+
+export const getMonth = (date: any) => {
+  return new Date(date).getMonth() + 1;
+};
+export const getYear = (date: any) => {
+  return new Date(date).getFullYear();
 };

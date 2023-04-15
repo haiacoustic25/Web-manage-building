@@ -11,7 +11,7 @@ type AvatarPickerProps = {
   width: number;
   height?: number;
   className?: string;
-  value?: any;
+  value1?: any;
   type?: 'default' | 'circle';
   isImgDefault?: boolean;
   onChangePickAvatar?: (imageList: any) => void;
@@ -20,7 +20,7 @@ type AvatarPickerProps = {
 export const AvatarPicker: React.FC<AvatarPickerProps> = ({
   width,
   height = width,
-  value = null,
+  value1 = null,
   className,
   type = 'default',
   isImgDefault = false,
@@ -43,10 +43,10 @@ export const AvatarPicker: React.FC<AvatarPickerProps> = ({
           <img src={image.dataURL} alt="" width={`${width}px`} height={`${height}px`} />
         </div>
       ));
-    if (value)
+    if (value1)
       return (
         <img
-          src={BASE_URL_AVT + value}
+          src={BASE_URL_AVT + value1}
           alt=""
           className="avtp__wrapper--avtDefault"
           width={`${width}px`}

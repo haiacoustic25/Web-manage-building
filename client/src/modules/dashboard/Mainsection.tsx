@@ -1,24 +1,18 @@
-import React, { useEffect, useState } from 'react';
 import {
   DeleteOutlined,
-  EditFilled,
-  EditOutlined,
   PlusCircleOutlined,
-  AppstoreOutlined,
-  SearchOutlined,
-  SnippetsFilled,
-  CloseCircleOutlined,
   ReloadOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
+import { Button, Form, Modal, Tooltip } from 'antd';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import renderComponentWithConfig from '../../HOC/component-with-config';
 import { useGetAllBuildingQuery, useRemoveBuildingMutation } from '../../api/buildingApi';
 import Header from '../../components/header';
-import { displayAddress } from '../../utils';
 import SearchWrapper from '../../components/searchWrapper';
-import { Button, Dropdown, Form, MenuProps, Modal, Tooltip } from 'antd';
 import SelectAddress from '../../components/selectAddress';
 import { BuildingType } from '../../types/BuildingType';
-import { toast } from 'react-toastify';
 import ItemBuilding from './ItemBuilding';
 import ModalBuilding from './modal/ModalBuilding';
 type Props = {
@@ -46,6 +40,9 @@ const Mainsection = ({ user }: Props) => {
   const [isModalOpenAdd, setIsModalOpenAdd] = useState(false);
   const { confirm } = Modal;
   const _handleSearch = (values: any) => {
+    for (const key in values) {
+      if (!values[key]) values[key] = '';
+    }
     const valuesFilter = { ...values };
     if (valuesFilter.city == -1) valuesFilter.city = '';
     if (valuesFilter.district == -1) valuesFilter.district = '';
@@ -129,9 +126,11 @@ const Mainsection = ({ user }: Props) => {
           </div>
         </div>
       </div>
-      <div className="button-add" onClick={showModal}>
-        <PlusCircleOutlined style={{ color: '#1677ff' }} />
-      </div>
+      <Tooltip title="Thêm Tòa nhà" placement="left">
+        <div className="button-add" onClick={showModal}>
+          <PlusCircleOutlined style={{ color: '#1677ff' }} />
+        </div>
+      </Tooltip>
       <ModalBuilding
         userId={user?.id}
         isModalOpen={isModalOpenAdd}

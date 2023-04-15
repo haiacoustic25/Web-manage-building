@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const { parseJwt } = require('../utils');
 const argon = require('argon2');
@@ -83,6 +84,7 @@ const register = async (req, res) => {
 
     return res.status(200).json({ success: true, message: 'Register successfully!!!' });
   } catch (error) {
+    console.log({ error });
     return res.status(500).json({ error: error });
   }
   // res.send("123");

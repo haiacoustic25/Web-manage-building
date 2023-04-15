@@ -1,5 +1,5 @@
 import { DownOutlined, LogoutOutlined, DashboardOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
+import { MenuProps, Tooltip } from 'antd';
 import { Dropdown } from 'antd';
 import { toast } from 'react-toastify';
 import renderComponentWithConfig from '../../HOC/component-with-config';
@@ -43,7 +43,9 @@ const Header = ({ user, hasToDashboard = true }: Props) => {
         {hasToDashboard && (
           <>
             <Link to="/">
-              <DashboardOutlined />
+              <Tooltip title="Dashboard">
+                <DashboardOutlined style={{ fontSize: '20px' }} />
+              </Tooltip>
             </Link>
             <div className="line-hr"></div>
           </>

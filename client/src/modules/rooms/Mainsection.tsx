@@ -3,7 +3,7 @@ import {
   EllipsisOutlined,
   ReloadOutlined,
   SearchOutlined,
-  SnippetsFilled,
+  DollarOutlined,
   UsergroupAddOutlined,
 } from '@ant-design/icons';
 import { Button, Col, Dropdown, Form, Input, Row, Select, Space, Tooltip } from 'antd';
@@ -14,9 +14,11 @@ import { useGetAllRoomQuery } from '../../api/roomApi';
 import SearchWrapper from '../../components/searchWrapper';
 import { RootState, useAppSelector } from '../../redux/store';
 import { RoomType } from '../../types/BuildingType';
-import { formatMoney } from '../../utils';
+import { formatMoney, getMonth, getYear } from '../../utils';
 import ModalCustomer from './modal/ModalCustomer';
 import ModalEditRoom from './modal/ModalEditRoom';
+import PaymentComponent from './Drawer/PaymentComponent';
+import formatDate from '../../utils/formatDate';
 
 interface DataType {
   key: string;
@@ -33,6 +35,7 @@ interface DataType {
 
 const Mainsection = () => {
   const [form] = Form.useForm();
+  const [isOpenPayment, setIsOpenPayment] = useState<boolean>(false);
   const buildingId = useAppSelector((state: RootState) => state.buildingId.buildingId);
   const [isModalOpenAdd, setIsModalOpenAdd] = useState(false);
   const [filter, setFilter] = useState({
@@ -42,16 +45,15 @@ const Mainsection = () => {
     areaFrom: '',
     areaTo: '',
     status: '',
+    floor: '',
   });
-  console.log({ filter });
-  // console.log({ building });
   const [isModalOpenAddCustomer, setIsModalOpenAddCustomer] = useState(false);
   const [roomSelect, setRoomSelect] = useState<RoomType | null>(null);
-  const { data, isFetching } = useGetAllRoomQuery(filter, {
+  const { data, isFetching, refetch } = useGetAllRoomQuery(filter, {
     skip: !filter,
     refetchOnMountOrArgChange: true,
-    // pollingInterval: 1000,
   });
+  const numberOfFloor = useAppSelector((state: RootState) => state.buildingId.numberOfFloors);
   const _handleFetchDefaultApi = () => {
     setFilter({
       buildingId,
@@ -60,24 +62,44 @@ const Mainsection = () => {
       areaFrom: '',
       areaTo: '',
       status: '',
+      floor: '',
     });
   };
   const _handleSearch = (values: any) => {
-    console.log({ values });
+    for (const key in values) {
+      if (!values[key]) values[key] = '';
+    }
     if (values.status == '-1')
       return setFilter({
-        buildingId,
+        ...filter,
         ...values,
         status: '',
       });
     return setFilter({
-      buildingId,
+      ...filter,
       ...values,
     });
   };
 
+  const _handleOpenPayment = (item: RoomType) => {
+    setRoomSelect(item);
+    setIsOpenPayment(true);
+  };
+
+  const _handleClosePayment = () => {
+    setRoomSelect(null);
+    setIsOpenPayment(false);
+  };
+
   const _handleRefetchFilter = () => {
-    form.setFieldsValue({ priceFrom: '', priceTo: '', areaFrom: '', areaTo: '', status: '' });
+    form.setFieldsValue({
+      priceFrom: '',
+      priceTo: '',
+      areaFrom: '',
+      areaTo: '',
+      status: '',
+      floor: '',
+    });
     _handleFetchDefaultApi();
   };
 
@@ -98,6 +120,13 @@ const Mainsection = () => {
     setIsModalOpenAddCustomer(false);
   };
 
+  const isExpired = (date: any) => {
+    return (
+      getMonth(date) === new Date().getMonth() + 1 && getYear(date) == new Date().getFullYear()
+    );
+  };
+  console.log(new Date().getFullYear());
+
   const columns: ColumnsType<DataType> = [
     {
       title: 'STT',
@@ -110,6 +139,11 @@ const Mainsection = () => {
       title: 'Tên phòng',
       dataIndex: 'name',
       key: 'name',
+    },
+    {
+      title: 'Tầng',
+      dataIndex: 'floor',
+      key: 'floor',
     },
     {
       title: 'Số người',
@@ -132,11 +166,25 @@ const Mainsection = () => {
       key: 'paymentDisplay',
     },
     {
+      title: 'Ngày bắt đầu',
+      dataIndex: 'dateStart',
+      key: 'dateStart',
+      render: (text) => <p>{formatDate(text, 'dd/MM/yyyy')}</p>,
+    },
+    {
+      title: 'Ngày kết thúc',
+      dataIndex: 'dateEnd',
+      key: 'dateEnd',
+      render: (text) => (
+        <p style={{ color: isExpired(text) ? 'red' : '' }}>{formatDate(text, 'dd/MM/yyyy')}</p>
+      ),
+    },
+    {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       render: (text) =>
-        text == 0 ? (
+        text == 1 ? (
           <p style={{ color: '#1677ff' }}> Đang trống</p>
         ) : (
           <p style={{ color: 'red' }}>Đã thuê</p>
@@ -161,9 +209,11 @@ const Mainsection = () => {
     return [
       {
         key: '1',
-        icon: <SnippetsFilled />,
-        label: 'Xem chi tiết',
-        onClick: () => {},
+        icon: <DollarOutlined style={{ color: '#208B33' }} />,
+        label: 'Thanh toán',
+        onClick: () => {
+          _handleOpenPayment(item);
+        },
       },
       {
         key: '2',
@@ -230,13 +280,32 @@ const Mainsection = () => {
                 </Col>
               </Row>
             </Row>
-            <Form.Item label="Trạng thái" name="status" style={{ marginTop: '10px' }}>
-              <Select style={{ width: '20%' }}>
-                <Select.Option value={-1}>Tất cả</Select.Option>
-                <Select.Option value={0}>Đang trống</Select.Option>
-                <Select.Option value={1}>Đã thuê</Select.Option>
-              </Select>
-            </Form.Item>
+            <Row gutter={10}>
+              <Col span={6}>
+                <Form.Item label="Trạng thái" name="status" style={{ marginTop: '10px' }}>
+                  <Select>
+                    <Select.Option value={-1}>Tất cả</Select.Option>
+                    <Select.Option value={1}>Đang trống</Select.Option>
+                    <Select.Option value={2}>Đã thuê</Select.Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              <Col span={6}>
+                <Form.Item label="Tầng" name="floor" style={{ marginTop: '10px' }}>
+                  <Select>
+                    {Array(numberOfFloor)
+                      .fill((index: number) => (
+                        <Select.Option value={`Tầng ${index + 1}`} key={index}>{`Tầng ${
+                          index + 1
+                        }`}</Select.Option>
+                      ))
+                      .map((item, index) => item(index))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+
             <Button type="primary" htmlType="submit" icon={<SearchOutlined />}>
               Tìm kiếm
             </Button>
@@ -257,11 +326,13 @@ const Mainsection = () => {
       />
       <ModalEditRoom isModalOpen={isModalOpenAdd} room={roomSelect} handleCancel={_handleCancel} />
       <ModalCustomer
+        refetch={refetch}
         isModalOpen={isModalOpenAddCustomer}
         handleCancel={_handleCancelCustomer}
         room={roomSelect}
         fetchApi={_handleFetchDefaultApi}
       />
+      <PaymentComponent open={isOpenPayment} onClose={_handleClosePayment} room={roomSelect} />
     </>
   );
 };

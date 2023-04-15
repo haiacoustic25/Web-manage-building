@@ -7,9 +7,9 @@ import { APIAddress } from '../../constants/APIAdress';
 type Props = {
   required?: boolean;
   mode?: string;
-  cityProps?: string | null;
-  districtProps?: string | null;
-  wardProps?: string | null;
+  cityProps?: any;
+  districtProps?: any;
+  wardProps?: any;
 };
 
 const SelectAddress = ({ required = false, mode, cityProps, districtProps, wardProps }: Props) => {

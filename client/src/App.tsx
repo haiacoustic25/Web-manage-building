@@ -1,11 +1,12 @@
-import { BrowserRouter } from "react-router-dom";
-import { Router } from "./routes/router";
-import "./assets/styles/app.scss";
-import { Provider } from "react-redux";
-import { store, persistor } from "./redux/store";
-import { PersistGate } from "redux-persist/integration/react";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { BrowserRouter } from 'react-router-dom';
+import { Router } from './routes/router';
+import './assets/styles/app.scss';
+import { Provider } from 'react-redux';
+import { store, persistor } from './redux/store';
+import { PersistGate } from 'redux-persist/integration/react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 function App() {
   return (

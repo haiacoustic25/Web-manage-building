@@ -1,7 +1,10 @@
-import { Button, Form, Input, Modal } from 'antd';
+import { Button, Checkbox, Col, Form, Input, Modal, Row, Select } from 'antd';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useEditRoomMutation } from '../../../api/roomApi';
+import { RootState, useAppSelector } from '../../../redux/store';
+import { FurnitureArr } from '../../../constants/Furniture';
+const { TextArea } = Input;
 
 type Props = {
   isModalOpen: boolean;
@@ -13,12 +16,19 @@ type Props = {
 const ModalEditRoom = ({ isModalOpen, handleCancel, room }: Props) => {
   const [form] = Form.useForm();
   const [handleEdit, resultEdit] = useEditRoomMutation();
+  const numberOfFloor = useAppSelector((state: RootState) => state.buildingId.numberOfFloors);
   const onFinish = (value: any) => {
     handleEdit({
       id: room.id,
+      ...value,
       area: Number(value.area),
       motorbikeAmount: Number(value.motorbikeAmount),
       payment: Number(value.payment),
+      environmentFee: Number(value.environmentFee),
+      internetFee: Number(value.internetFee),
+      domesticWaterFee: Number(value.domesticWaterFee),
+      electricFee: Number(value.electricFee),
+      // furniture: JSON.stringify(value.furniture),
     });
   };
   useEffect(() => {
@@ -55,35 +65,93 @@ const ModalEditRoom = ({ isModalOpen, handleCancel, room }: Props) => {
           <span style={{ fontSize: '16px', fontWeight: '700' }}>{room?.name}</span>
         </div>
 
-        <Form.Item
-          label="Diện tích (m2)"
-          name="area"
-          rules={[{ required: true, message: 'Không được để trống' }]}
-        >
-          <Input type="number" />
-        </Form.Item>
-        <Form.Item
-          label="Giá tiền"
-          name="payment"
-          rules={[{ required: true, message: 'Không được để trống' }]}
-        >
-          <Input type="number" />
-        </Form.Item>
-        <Form.Item
-          label="Số lượng xe máy"
-          name="motorbikeAmount"
-          rules={[{ required: true, message: 'Không được để trống' }]}
-        >
-          <Input type="number" />
-        </Form.Item>
-        {/* <Form.Item
-          label="Giá tiền điện ( Trên 1 số )"
-          name="electricityPrice"
-          rules={[{ required: true, message: 'Không được để trống' }]}
-        >
-          <Input type="number" />
-        </Form.Item> */}
-
+        <div className="mc__container">
+          <Form.Item
+            label="Diện tích (m2)"
+            name="area"
+            rules={[{ required: true, message: 'Không được để trống' }]}
+            style={{ marginBottom: '12px' }}
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            label="Tầng"
+            name="floor"
+            rules={[{ required: true, message: 'Không được để trống' }]}
+            style={{ marginBottom: '12px' }}
+          >
+            <Select>
+              {Array(numberOfFloor)
+                .fill((index: number) => (
+                  <Select.Option value={`Tầng ${index + 1}`} key={index}>{`Tầng ${
+                    index + 1
+                  }`}</Select.Option>
+                ))
+                .map((item, index) => item(index))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Giá tiền phòng"
+            name="payment"
+            style={{ marginBottom: '12px' }}
+            rules={[{ required: true, message: 'Không được để trống' }]}
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            label="Tiền điện ( Trên 1 số )"
+            name="electricFee"
+            rules={[{ required: true, message: 'Không được để trống' }]}
+            style={{ marginBottom: '12px' }}
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            label="Tiền nước ( Trên 1 m khối )"
+            name="domesticWaterFee"
+            rules={[{ required: true, message: 'Không được để trống' }]}
+            style={{ marginBottom: '12px' }}
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            label="Tiền mạng"
+            name="internetFee"
+            rules={[{ required: true, message: 'Không được để trống' }]}
+            style={{ marginBottom: '12px' }}
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            label="Tiền vệ sinh"
+            name="environmentFee"
+            rules={[{ required: true, message: 'Không được để trống' }]}
+            style={{ marginBottom: '12px' }}
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            label="Số lượng xe máy"
+            name="motorbikeAmount"
+            rules={[{ required: true, message: 'Không được để trống' }]}
+            style={{ marginBottom: '12px' }}
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item label="Nội thất" name="furniture" style={{ marginBottom: '12px' }}>
+            <Checkbox.Group style={{ marginLeft: '20px' }}>
+              <Row>
+                {FurnitureArr.map((item) => (
+                  <Col span={24} key={item.value}>
+                    <Checkbox value={item.value} style={{ lineHeight: '32px' }}>
+                      {item.label}
+                    </Checkbox>
+                  </Col>
+                ))}
+              </Row>
+            </Checkbox.Group>
+          </Form.Item>
+        </div>
         <Form.Item style={{ justifyContent: 'end', display: 'flex' }}>
           <Button style={{ marginRight: '10px' }} onClick={handleCancel}>
             Hủy

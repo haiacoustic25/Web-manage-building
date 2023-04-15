@@ -4,10 +4,12 @@ import { createSlice } from '@reduxjs/toolkit';
 
 type BuildingSliceType = {
   buildingId: string | null;
+  numberOfFloors: number;
 };
 
 const initialState: BuildingSliceType = {
   buildingId: '',
+  numberOfFloors: 0,
 };
 
 const buildingSlice = createSlice({
@@ -15,7 +17,8 @@ const buildingSlice = createSlice({
   initialState,
   reducers: {
     setBuildingId: (state, action: any) => {
-      state.buildingId = action.payload;
+      state.buildingId = action.payload.id;
+      state.numberOfFloors = action.payload.numberOfFloors;
     },
   },
 });

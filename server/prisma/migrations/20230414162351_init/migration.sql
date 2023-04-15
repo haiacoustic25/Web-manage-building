@@ -13,7 +13,7 @@ CREATE TABLE `Customer` (
     `citizenIdentificationNumber` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NULL,
     `dateOfEntry` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `status` INTEGER NOT NULL DEFAULT 0,
+    `status` INTEGER NOT NULL DEFAULT 1,
     `roomId` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -23,12 +23,14 @@ CREATE TABLE `Customer` (
 CREATE TABLE `Report` (
     `id` VARCHAR(191) NOT NULL,
     `roomId` VARCHAR(191) NOT NULL,
-    `startDate` DATETIME(3) NOT NULL,
-    `endDate` DATETIME(3) NOT NULL,
     `totalPayment` DOUBLE NOT NULL,
     `payment` DOUBLE NOT NULL,
+    `environmentFee` DOUBLE NOT NULL,
+    `status` INTEGER NOT NULL DEFAULT 1,
+    `internetFee` DOUBLE NULL,
     `electricFee` DOUBLE NOT NULL,
     `domesticWaterFee` DOUBLE NOT NULL,
+    `domesticWaterNumber` DOUBLE NOT NULL,
     `electricNumber` DOUBLE NULL,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -39,13 +41,20 @@ CREATE TABLE `Report` (
 CREATE TABLE `Room` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
-    `status` INTEGER NOT NULL DEFAULT 0,
+    `status` INTEGER NOT NULL DEFAULT 1,
     `amountOfPeople` INTEGER NULL,
     `payment` DOUBLE NOT NULL,
     `area` DOUBLE NULL,
-    `electricityPrice` DOUBLE NULL,
+    `floor` VARCHAR(191) NULL,
+    `electricFee` DOUBLE NULL,
+    `domesticWaterFee` DOUBLE NULL,
+    `internetFee` DOUBLE NULL,
+    `environmentFee` DOUBLE NULL,
     `buildingId` VARCHAR(191) NOT NULL,
     `motorbikeAmount` INTEGER NULL,
+    `dateStart` DATETIME(3) NULL,
+    `dateEnd` DATETIME(3) NULL,
+    `furniture` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -58,7 +67,8 @@ CREATE TABLE `Building` (
     `ward` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `amountRooms` INTEGER NOT NULL,
-    `status` INTEGER NOT NULL DEFAULT 0,
+    `status` INTEGER NOT NULL DEFAULT 1,
+    `numberOfFloors` INTEGER NOT NULL,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
@@ -76,7 +86,7 @@ CREATE TABLE `User` (
     `username` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `role` INTEGER NOT NULL DEFAULT 1,
-    `status` INTEGER NOT NULL DEFAULT 0,
+    `status` INTEGER NOT NULL DEFAULT 1,
     `approveBy` VARCHAR(191) NULL,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 

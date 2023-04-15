@@ -10,6 +10,8 @@ import { setupListeners } from '@reduxjs/toolkit/dist/query';
 import { roomApi } from '../api/roomApi';
 import { customerApi } from '../api/customerApi';
 import buildingSlice from './reducer/buildingReducer';
+import { reportApi } from '../api/reportApi';
+import { statisticalApi } from '../api/statisticalApi';
 
 // const localStorageMiddleware = ({ getState }: any) => {
 //   return (next: any) => (action: any) => {
@@ -28,6 +30,8 @@ const rootReducer = combineReducers({
   dataUser: authSlice.reducer,
   buildingId: buildingSlice.reducer,
   [authApi.reducerPath]: authApi.reducer,
+  [statisticalApi.reducerPath]: statisticalApi.reducer,
+  [reportApi.reducerPath]: reportApi.reducer,
   [buildingApi.reducerPath]: buildingApi.reducer,
   [roomApi.reducerPath]: roomApi.reducer,
   [customerApi.reducerPath]: customerApi.reducer,
@@ -45,8 +49,10 @@ export const store = configureStore({
     getDefaultMiddleware().concat(
       authApi.middleware,
       buildingApi.middleware,
+      reportApi.middleware,
       roomApi.middleware,
       customerApi.middleware,
+      statisticalApi.middleware,
       rtkQueryError
     ),
 });

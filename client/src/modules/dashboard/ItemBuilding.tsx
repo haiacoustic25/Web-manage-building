@@ -15,11 +15,11 @@ const ItemBuilding = ({ item, showConfirm, _handleEditBuilding }: Props) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const renderStatus = (status: number) => {
-    if (status === 1) return <div className="dashboard__item--infor-status red">Đã đầy</div>;
+    if (status === 2) return <div className="dashboard__item--infor-status red">Đã đầy</div>;
     return <div className="dashboard__item--infor-status">Đang còn phòng</div>;
   };
   const _handleSelectBuilding = () => {
-    dispatch(setBuildingId(item.id));
+    dispatch(setBuildingId(item));
     navigate('/statistical');
   };
   return (
@@ -35,6 +35,8 @@ const ItemBuilding = ({ item, showConfirm, _handleEditBuilding }: Props) => {
           {renderStatus(item.status)}
           <div>-</div>
           <div className="dashboard__item--infor-amountRoom">Số phòng: {item.amountRooms}</div>
+          <div>-</div>
+          <div className="dashboard__item--infor-amountRoom">Số tầng: {item.numberOfFloors}</div>
         </div>
       </div>
       <div className="dashboard__item--action" onClick={() => setIsOpenAction(!isOpenListAction)}>

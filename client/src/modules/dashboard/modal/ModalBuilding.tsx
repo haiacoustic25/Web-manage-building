@@ -22,7 +22,13 @@ const ModalBuilding = ({ isModalOpen, handleCancel, userId, building }: Props) =
 
   const onFinish = (value: any) => {
     handleCancel();
-    if (!building) return handleAdd({ userId, ...value, amountRooms: Number(value.amountRooms) });
+    if (!building)
+      return handleAdd({
+        userId,
+        ...value,
+        amountRooms: Number(value.amountRooms),
+        numberOfFloors: Number(value.numberOfFloors),
+      });
     return handleEdit({ id: building.id, ...value });
   };
   useEffect(() => {
@@ -71,6 +77,14 @@ const ModalBuilding = ({ isModalOpen, handleCancel, userId, building }: Props) =
           rules={[{ required: true, message: 'Không được để trống' }]}
         >
           <Input type="number" placeholder="Nhập số phòng" disabled={building ? true : false} />
+        </Form.Item>
+        <Form.Item
+          label="Số tầng"
+          name="numberOfFloors"
+          style={{ marginBottom: '10px', width: '50%' }}
+          rules={[{ required: true, message: 'Không được để trống' }]}
+        >
+          <Input type="number" placeholder="Nhập số tầng" />
         </Form.Item>
 
         <Form.Item style={{ justifyContent: 'end', display: 'flex' }}>

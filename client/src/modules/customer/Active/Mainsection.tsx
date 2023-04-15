@@ -1,4 +1,11 @@
-import React, { useState } from 'react';
+import {
+  DeleteOutlined,
+  EditFilled,
+  EllipsisOutlined,
+  PlusCircleOutlined,
+  ReloadOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -6,29 +13,28 @@ import {
   Dropdown,
   Form,
   Input,
+  Modal,
   Row,
   Select,
   Space,
   Table,
   Tooltip,
 } from 'antd';
-import {
-  DeleteFilled,
-  EditFilled,
-  EllipsisOutlined,
-  PlusCircleOutlined,
-  SearchOutlined,
-  SnippetsFilled,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import { useGetAllCustomerQuery } from '../../api/customerApi';
-import { BASE_URL_AVT } from '../../constants/config';
 import { ColumnsType } from 'antd/es/table';
-import { CustomerType } from '../../types/CustomerType';
-import { displayAddress } from '../../utils';
-import formatDate from '../../utils/formatDate';
-import SearchWrapper from '../../components/searchWrapper';
-import SelectAddress from '../../components/selectAddress';
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useGetAllCustomerQuery, useRemoveCustomerMutation } from '../../../api/customerApi';
+import { useGetAllRoomQuery } from '../../../api/roomApi';
+import SearchWrapper from '../../../components/searchWrapper';
+import SelectAddress from '../../../components/selectAddress';
+import { BASE_URL_AVT } from '../../../constants/config';
+import { RootState, useAppSelector } from '../../../redux/store';
+import { CustomerType } from '../../../types/CustomerType';
+import { displayAddress } from '../../../utils';
+import formatDate from '../../../utils/formatDate';
+import ModalCustomer from '../modal/ModalCustomer';
+
 interface DataType {
   avatar: string;
   key: string;
@@ -43,9 +49,22 @@ interface DataType {
 const { RangePicker } = DatePicker;
 
 const Mainsection = () => {
+  const { confirm } = Modal;
+  const buildingId = useAppSelector((state: RootState) => state.buildingId.buildingId);
+  const { data: dataRoom } = useGetAllRoomQuery({
+    buildingId,
+    priceFrom: '',
+    priceTo: '',
+    areaFrom: '',
+    areaTo: '',
+    status: '',
+  });
   const [form] = Form.useForm();
+  const [customerSelect, setCustomerSelect] = useState<CustomerType | null>(null);
+  const [handleRemove, resultRemove] = useRemoveCustomerMutation();
   const [filter, setFilter] = useState({
     // userId: user?.id,
+    buildingId,
     name: '',
     phone: '',
     city: '',
@@ -53,13 +72,15 @@ const Mainsection = () => {
     ward: '',
     citizenIdentificationNumber: '',
     email: '',
-    status: '',
+    status: 1,
+    gender: '',
     roomId: '',
     dateStart: '',
     dateEnd: '',
     pageIndex: 1,
     pageSize: 10,
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { data, isFetching } = useGetAllCustomerQuery(filter, {
     skip: !filter,
     refetchOnMountOrArgChange: true,
@@ -67,6 +88,7 @@ const Mainsection = () => {
   });
   const _refetchSearch = () => {
     setFilter({
+      buildingId,
       name: '',
       phone: '',
       city: '',
@@ -74,25 +96,78 @@ const Mainsection = () => {
       ward: '',
       citizenIdentificationNumber: '',
       email: '',
-      status: '',
+      status: 1,
+      gender: '',
       roomId: '',
       dateStart: '',
       dateEnd: '',
       pageIndex: 1,
       pageSize: 10,
     });
+    form.setFieldsValue({
+      buildingId,
+      name: '',
+      phone: '',
+      city: '',
+      district: '',
+      ward: '',
+      citizenIdentificationNumber: '',
+      email: '',
+      gender: '',
+      roomId: '',
+      dateStart: '',
+      dateEnd: '',
+    });
   };
+  const _showModalCustomer = () => {
+    setIsModalOpen(true);
+    if (customerSelect) setCustomerSelect(null);
+  };
+
+  const _handleCancelCustomer = () => {
+    // setRoomSelect(null);
+    setIsModalOpen(false);
+  };
+
   const _handleSearch = (values: any) => {
+    for (const key in values) {
+      if (!values[key]) values[key] = '';
+    }
     const valuesFilter = { ...values };
     if (valuesFilter.city == -1) valuesFilter.city = '';
     if (valuesFilter.district == -1) valuesFilter.district = '';
     if (valuesFilter.ward == -1) valuesFilter.ward = '';
-
+    if (valuesFilter.date) {
+      valuesFilter.dateStart = dayjs(values.date[0]).format('YYYY-MM-DD');
+      valuesFilter.dateEnd = dayjs(values.date[1]).format('YYYY-MM-DD');
+    }
     setFilter({ ...filter, pageIndex: 1, ...valuesFilter });
   };
   const handleChangePage = (page: any) => {
     setFilter({ ...filter, pageIndex: page });
   };
+  const showConfirm = (item: any) => {
+    confirm({
+      title: 'Xóa',
+      icon: <DeleteOutlined style={{ color: 'red' }} />,
+      content: 'Bạn có muốn xóa không?',
+      okText: 'Đồng ý',
+      // confirmLoading:isLoading,
+      cancelText: 'Hủy',
+      onOk() {
+        handleRemove({ id: item.id });
+        // _handleRemove(item.id);
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (resultRemove.isSuccess) toast.success('Xóa người thuê thành công !');
+    if (resultRemove.isError) toast.error('Xóa người thuê thất bại !');
+  }, [resultRemove]);
 
   const columns: ColumnsType<DataType> = [
     {
@@ -121,7 +196,7 @@ const Mainsection = () => {
       dataIndex: 'gender',
       key: 'gender',
       render: (text) => {
-        if (text == 0) return <p>Nữ</p>;
+        if (text == 1) return <p>Nữ</p>;
         return <p>Nam</p>;
       },
     },
@@ -136,9 +211,15 @@ const Mainsection = () => {
       key: 'citizenIdentificationNumber',
     },
     {
+      title: 'Tên phòng',
+      dataIndex: 'roomName',
+      key: 'roomName',
+    },
+    {
       title: 'Ngày ở',
-      dataIndex: 'dateOfEntryDisplay',
-      key: 'dateOfEntryDisplay',
+      dataIndex: 'dateOfEntry',
+      key: 'dateOfEntry',
+      render: (text) => <p>{formatDate(text, 'dd/MM/yyyy')}</p>,
     },
 
     {
@@ -160,7 +241,6 @@ const Mainsection = () => {
       return {
         key: (filter.pageIndex - 1) * filter.pageSize + index + 1,
         address: displayAddress(item),
-        dateOfEntryDisplay: formatDate(item?.dateOfEntry, 'dd/MM/yyyy'),
         ...item,
       };
     });
@@ -170,27 +250,19 @@ const Mainsection = () => {
     return [
       {
         key: '1',
-        icon: <SnippetsFilled />,
-        label: 'Xem chi tiết',
+        icon: <EditFilled />,
+        label: 'Sửa',
         onClick: () => {
-          // _showDrawer();
+          _showModalCustomer();
+          setCustomerSelect(item);
           // _handleSelectBuilding(item);
         },
       },
       {
         key: '2',
-        icon: <EditFilled />,
-        label: 'Sửa',
-        onClick: () => {
-          // showModal();
-          // _handleSelectBuilding(item);
-        },
-      },
-      {
-        key: '3',
-        icon: <DeleteFilled style={{ color: 'red' }} />,
+        icon: <DeleteOutlined style={{ color: 'red' }} />,
         label: 'Xóa',
-        // onClick: () => showConfirm(item),
+        onClick: () => showConfirm(item),
       },
     ];
   };
@@ -213,8 +285,8 @@ const Mainsection = () => {
                     // allowClear
                   >
                     <Select.Option value={-1}>Tất cả</Select.Option>
-                    <Select.Option value={0}>Nam</Select.Option>
                     <Select.Option value={1}>Nữ</Select.Option>
+                    <Select.Option value={2}>Nam</Select.Option>
                   </Select>
                 </Form.Item>
               </Col>
@@ -231,33 +303,23 @@ const Mainsection = () => {
             </Row>
             <Row gutter={10}>
               <Col span={8}>
-                <Form.Item label="Ngày ở">
-                  <RangePicker style={{ width: '100%' }} />
+                <Form.Item label="Ngày ở" name="date">
+                  <RangePicker
+                    style={{ width: '100%' }}
+                    showTime
+                    format="YYYY/MM/DD"
+                    // value={[moment(dateRange.from), moment(dateRange.to)]}
+                  />
                 </Form.Item>
               </Col>
+
               <Col span={6}>
-                <Form.Item label="Chọn tòa nhà" name="gender">
-                  <Select
-                    style={{ width: '100%' }}
-                    // onChange={onGenderChange}
-                    // allowClear
-                  >
+                <Form.Item label="Chọn phòng trọ" name="roomId">
+                  <Select style={{ width: '100%' }}>
                     <Select.Option value={-1}>Tất cả</Select.Option>
-                    <Select.Option value={0}>Nam</Select.Option>
-                    <Select.Option value={1}>Nữ</Select.Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item label="Chọn phòng trọ" name="gender">
-                  <Select
-                    style={{ width: '100%' }}
-                    // onChange={onGenderChange}
-                    // allowClear
-                  >
-                    <Select.Option value={-1}>Tất cả</Select.Option>
-                    <Select.Option value={0}>Nam</Select.Option>
-                    <Select.Option value={1}>Nữ</Select.Option>
+                    {dataRoom?.data.map((_: any) => (
+                      <Select.Option value={_.id}>{_.name}</Select.Option>
+                    ))}
                   </Select>
                 </Form.Item>
               </Col>
@@ -281,11 +343,12 @@ const Mainsection = () => {
           type="primary"
           icon={<PlusCircleOutlined />}
           className="customer-content__add"
-          // onClick={showModal}
+          onClick={_showModalCustomer}
         >
           Thêm
         </Button>
         <Table
+          bordered
           columns={columns}
           dataSource={renderContent()}
           loading={isFetching}
@@ -299,6 +362,14 @@ const Mainsection = () => {
           }}
         />
       </div>
+      <ModalCustomer
+        isModalOpen={isModalOpen}
+        handleCancel={_handleCancelCustomer}
+        listRoom={dataRoom}
+        customerSelect={customerSelect}
+        // room={roomSelect}
+        // fetchApi={_handleFetchDefaultApi}
+      />
     </>
   );
 };

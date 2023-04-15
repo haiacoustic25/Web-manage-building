@@ -18,7 +18,8 @@ const router = express.Router();
 
 router.post('/create', verifyToken, upload.single('file'), customerController.create);
 router.post('/getAllCustomer', verifyToken, customerController.getAllCustomer);
-// router.post("/update", customerController.update);
-// router.delete("/delete", customerController.deleteBuilding);
+
+router.post('/update', verifyToken, upload.single('file'), customerController.update);
+router.post('/remove', verifyToken, customerController.remove);
 
 module.exports = router;

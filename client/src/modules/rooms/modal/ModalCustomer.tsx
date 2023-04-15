@@ -1,19 +1,23 @@
-import { Button, Col, Form, Input, Modal, Radio, Row } from 'antd';
+import { Button, Col, DatePicker, Form, Input, Modal, Radio, Row } from 'antd';
 import { useEffect } from 'react';
+import moment from 'dayjs';
 import { toast } from 'react-toastify';
 import { useAddCustomerMutation } from '../../../api/customerApi';
 import { AvatarPicker } from '../../../components/AvatarPicker/AvatarPicker';
 import SelectAddress from '../../../components/selectAddress';
+import dayjs from 'dayjs';
+
+const { RangePicker } = DatePicker;
 
 type Props = {
   isModalOpen: boolean;
-
+  refetch: () => void;
   fetchApi: () => void;
   handleCancel: () => void;
   room: any;
 };
 
-const ModalCustomer = ({ isModalOpen, handleCancel, room, fetchApi }: Props) => {
+const ModalCustomer = ({ isModalOpen, handleCancel, room, fetchApi, refetch }: Props) => {
   const [form] = Form.useForm();
   const [handleAdd, resultAdd] = useAddCustomerMutation();
   const { isSuccess, isLoading, isError } = resultAdd;
@@ -22,14 +26,30 @@ const ModalCustomer = ({ isModalOpen, handleCancel, room, fetchApi }: Props) => 
     // return handleEdit({ id: building.id, ...value });
     const formData = new FormData();
     for (const key in data) {
-      if (data[key] !== undefined && data[key] !== null) {
+      if (
+        data[key] !== undefined &&
+        data[key] !== null &&
+        key !== 'dateStart' &&
+        key !== 'dateEnd'
+      ) {
         formData.append(key, data[key]);
       }
     }
-    formData.append('status', '0');
+    const dateStart = dayjs(data.dateStart).format('YYYY-MM-DD');
+    const dateEnd = dayjs(data.dateEnd).format('YYYY-MM-DD');
+    formData.append('dateStart', `${dateStart}`);
+    formData.append('dateEnd', `${dateEnd}`);
+    formData.append('status', '1');
     formData.append('roomId', room.id);
     handleAdd(formData);
+    // refetch();
   };
+
+  useEffect(() => {
+    if (room?.amountOfPeople) {
+      form.setFieldsValue({ dateStart: moment(room.dateStart), dateEnd: moment(room.dateEnd) });
+    }
+  }, [room]);
 
   const onChangePickAvatar = (value: any) => {
     form.setFieldsValue({ file: value?.file });
@@ -64,7 +84,6 @@ const ModalCustomer = ({ isModalOpen, handleCancel, room, fetchApi }: Props) => 
               <Form.Item label="Avatar" name="file">
                 <AvatarPicker
                   width={100}
-                  value={null}
                   type="circle"
                   isImgDefault={true}
                   onChangePickAvatar={onChangePickAvatar}
@@ -137,9 +156,35 @@ const ModalCustomer = ({ isModalOpen, handleCancel, room, fetchApi }: Props) => 
                 rules={[{ required: true, message: 'Không được để trống' }]}
               >
                 <Radio.Group>
-                  <Radio value={0}> Nữ </Radio>
-                  <Radio value={1}> Nam </Radio>
+                  <Radio value={1}> Nữ </Radio>
+                  <Radio value={2}> Nam </Radio>
                 </Radio.Group>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                label="Ngày bắt đầu hợp đồng"
+                name="dateStart"
+                rules={[{ required: true, message: 'Không được để trống' }]}
+              >
+                <DatePicker
+                  placeholder="Ngày bắt đầu"
+                  disabled={room?.amountOfPeople ? true : false}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="Ngày kết thúc hợp đồng"
+                name="dateEnd"
+                rules={[{ required: true, message: 'Không được để trống' }]}
+              >
+                <DatePicker
+                  placeholder="Ngày kết thúc"
+                  disabled={room?.amountOfPeople ? true : false}
+                />
               </Form.Item>
             </Col>
           </Row>

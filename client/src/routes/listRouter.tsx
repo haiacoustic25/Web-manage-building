@@ -11,7 +11,7 @@ const RoomComponent = lazy(() =>
   }))
 );
 const UserComponent = lazy(() =>
-  import('../modules/customer').then(({ UserComponent }) => ({
+  import('../modules/customer/Active').then(({ UserComponent }) => ({
     default: UserComponent,
   }))
 );
@@ -25,13 +25,25 @@ const DashboardComponent = lazy(() =>
     default: DashboardComponent,
   }))
 );
+const UserNonActiveComponent = lazy(() =>
+  import('../modules/customer/Non-active').then(({ UseNonActiveComponent }) => ({
+    default: UseNonActiveComponent,
+  }))
+);
+const ReportComponent = lazy(() =>
+  import('../modules/reports').then(({ ReportComponent }) => ({
+    default: ReportComponent,
+  }))
+);
 
 export const url = {
   login: '/login',
   dashboard: '/',
   statistical: '/statistical',
   userManager: '/user-manager',
+  userNonActiveManager: '/user-manager-non-active',
   roomManager: '/room',
+  reportManager: '/report',
 };
 
 export const RouterPublic: RouterType[] = [{ url: url.login, element: <Login /> }];
@@ -40,5 +52,7 @@ export const RouterAdmin: RouterType[] = [
   { url: url.statistical, element: <StatisticalComponent /> },
   { url: url.userManager, element: <UserComponent /> },
   { url: url.roomManager, element: <RoomComponent /> },
+  { url: url.userNonActiveManager, element: <UserNonActiveComponent /> },
   { url: url.dashboard, element: <DashboardComponent /> },
+  { url: url.reportManager, element: <ReportComponent /> },
 ];
