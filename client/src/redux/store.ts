@@ -12,6 +12,8 @@ import { customerApi } from '../api/customerApi';
 import buildingSlice from './reducer/buildingReducer';
 import { reportApi } from '../api/reportApi';
 import { statisticalApi } from '../api/statisticalApi';
+import { bookingApi } from '../api/bookingApi';
+import { furnitureApi } from '../api/furnitureApi';
 
 // const localStorageMiddleware = ({ getState }: any) => {
 //   return (next: any) => (action: any) => {
@@ -30,11 +32,13 @@ const rootReducer = combineReducers({
   dataUser: authSlice.reducer,
   buildingId: buildingSlice.reducer,
   [authApi.reducerPath]: authApi.reducer,
+  [bookingApi.reducerPath]: bookingApi.reducer,
   [statisticalApi.reducerPath]: statisticalApi.reducer,
   [reportApi.reducerPath]: reportApi.reducer,
   [buildingApi.reducerPath]: buildingApi.reducer,
   [roomApi.reducerPath]: roomApi.reducer,
   [customerApi.reducerPath]: customerApi.reducer,
+  [furnitureApi.reducerPath]: furnitureApi.reducer,
 });
 // const rootReducer = {
 //
@@ -53,6 +57,8 @@ export const store = configureStore({
       roomApi.middleware,
       customerApi.middleware,
       statisticalApi.middleware,
+      bookingApi.middleware,
+      furnitureApi.middleware,
       rtkQueryError
     ),
 });

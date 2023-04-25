@@ -1,10 +1,11 @@
-import { Button, Checkbox, Col, Form, Input, Modal, Row, Select } from 'antd';
+import { Button, Checkbox, Col, DatePicker, Form, Input, Modal, Row, Select } from 'antd';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useEditRoomMutation } from '../../../api/roomApi';
 import { RootState, useAppSelector } from '../../../redux/store';
 import { FurnitureArr } from '../../../constants/Furniture';
-const { TextArea } = Input;
+import moment from 'dayjs';
+import dayjs from 'dayjs';
 
 type Props = {
   isModalOpen: boolean;
@@ -28,6 +29,8 @@ const ModalEditRoom = ({ isModalOpen, handleCancel, room }: Props) => {
       internetFee: Number(value.internetFee),
       domesticWaterFee: Number(value.domesticWaterFee),
       electricFee: Number(value.electricFee),
+      dateStart: dayjs(value.dateStart).format('YYYY-MM-DD'),
+      dateEnd: dayjs(value.dateEnd).format('YYYY-MM-DD'),
       // furniture: JSON.stringify(value.furniture),
     });
   };
@@ -42,7 +45,11 @@ const ModalEditRoom = ({ isModalOpen, handleCancel, room }: Props) => {
   }, [resultEdit]);
   useEffect(() => {
     if (room) {
-      form.setFieldsValue(room);
+      form.setFieldsValue({
+        ...room,
+        dateStart: moment(room.dateStart || new Date()),
+        dateEnd: moment(room.dateEnd || new Date()),
+      });
     }
   }, [room]);
   return (
@@ -138,18 +145,21 @@ const ModalEditRoom = ({ isModalOpen, handleCancel, room }: Props) => {
           >
             <Input type="number" />
           </Form.Item>
-          <Form.Item label="Nội thất" name="furniture" style={{ marginBottom: '12px' }}>
-            <Checkbox.Group style={{ marginLeft: '20px' }}>
-              <Row>
-                {FurnitureArr.map((item) => (
-                  <Col span={24} key={item.value}>
-                    <Checkbox value={item.value} style={{ lineHeight: '32px' }}>
-                      {item.label}
-                    </Checkbox>
-                  </Col>
-                ))}
-              </Row>
-            </Checkbox.Group>
+          <Form.Item
+            label="Ngày bắt đầu hợp đồng"
+            name="dateStart"
+            rules={[{ required: true, message: 'Không được để trống' }]}
+            style={{ marginBottom: '12px' }}
+          >
+            <DatePicker placeholder="Ngày bắt đầu" />
+          </Form.Item>
+          <Form.Item
+            label="Ngày kết thúc hợp đồng"
+            name="dateEnd"
+            rules={[{ required: true, message: 'Không được để trống' }]}
+            style={{ marginBottom: '12px' }}
+          >
+            <DatePicker placeholder="Ngày kết thúc" />
           </Form.Item>
         </div>
         <Form.Item style={{ justifyContent: 'end', display: 'flex' }}>

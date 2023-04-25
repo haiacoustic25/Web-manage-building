@@ -42,7 +42,7 @@ const login = async (req, res) => {
 };
 
 const register = async (req, res) => {
-  const { name, city, district, ward, phone, username, password, role, status, approveBy } =
+  const { name, city, district, ward, phone, username, password, status, email, password_email } =
     req.body;
   if (!name || !username || !password)
     return res.status(201).json({ success: false, message: 'Missing information!' });
@@ -63,9 +63,11 @@ const register = async (req, res) => {
       phone,
       username,
       password: hashPassword,
-      role,
+
+      email,
+      password_email,
       status,
-      approveBy,
+
       avatar: req.file ? req.file.filename : '',
     };
     // console.log({ newUser });
@@ -74,15 +76,19 @@ const register = async (req, res) => {
     });
 
     if (!result) return res.status(500).json({ success: false });
-    // const accessToken = jwt.sign({userId:})
 
-    // const secretKey = process.env.SECRET_JWT || '';
+    const secretKey = process.env.SECRET_JWT || '';
 
-    // const token = jwt.sign({ user_id: result.id.toString() }, secretKey, {
-    //   expiresIn: '24h',
-    // });
+    const token = jwt.sign({ user_id: result.id.toString() }, secretKey, {
+      expiresIn: '24h',
+    });
 
-    return res.status(200).json({ success: true, message: 'Register successfully!!!' });
+    return res.status(200).json({
+      success: true,
+      message: 'Register successfully!!!',
+      token,
+      data: newUser,
+    });
   } catch (error) {
     console.log({ error });
     return res.status(500).json({ error: error });
@@ -110,7 +116,7 @@ const getUserByToken = async (req, res) => {
         message: 'Access toke not defined! ',
       });
 
-    const { name, phone, address, username, role, status, approveBy } = user;
+    const { name, phone, address, username, status } = user;
     return res.status(200).json({
       success: true,
       data: {
@@ -118,9 +124,8 @@ const getUserByToken = async (req, res) => {
         address,
         phone,
         username,
-        role,
+
         status,
-        approveBy,
       },
     });
   }

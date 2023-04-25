@@ -114,24 +114,6 @@ const ModalCustomer = ({ isModalOpen, handleCancel, listRoom, customerSelect }: 
               </Row>
             </Col>
           </Row>
-
-          <Form.Item
-            label="Tên đăng nhập"
-            name="username"
-            rules={[{ required: true, message: 'Không được để trống' }]}
-          >
-            <Input disabled={customerSelect ? true : false} />
-          </Form.Item>
-
-          {!customerSelect && (
-            <Form.Item
-              label="Mật khẩu"
-              name="password"
-              rules={[{ required: true, message: 'Không được để trống' }]}
-            >
-              <Input.Password />
-            </Form.Item>
-          )}
           <Form.Item
             label="Phòng"
             name="roomId"
@@ -146,6 +128,13 @@ const ModalCustomer = ({ isModalOpen, handleCancel, listRoom, customerSelect }: 
                 <Select.Option value={_.id}>{_.name}</Select.Option>
               ))}
             </Select>
+          </Form.Item>
+          <Form.Item
+            label="email"
+            name="email"
+            rules={[{ required: true, message: 'Không được để trống' }]}
+          >
+            <Input type="email" />
           </Form.Item>
           <Form.Item
             label="Số căn cước công dân"

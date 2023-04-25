@@ -16,8 +16,8 @@ const BoxGender = () => {
       {
         label: 'Tỷ lệ',
         data: [data?.data.male, data?.data.female],
-        backgroundColor: ['#66D8FD', '#207B8B'],
-        borderColor: ['#66D8FD', '#207B8B'],
+        backgroundColor: ['#207B8B', '#66D8FD'],
+        borderColor: ['#207B8B', '#66D8FD'],
         borderWidth: 1,
       },
     ],
@@ -38,7 +38,7 @@ const BoxGender = () => {
         </div>
         <div className="box-right">
           <div className="box-right__item">
-            <div className="dot" style={{ backgroundColor: '#66D8FD' }}></div>
+            <div className="dot" style={{ backgroundColor: '#207B8B' }}></div>
             <p className="label">Nam giới</p>
 
             <div>{data?.data.male}</div>
@@ -46,7 +46,7 @@ const BoxGender = () => {
             <div className="grey">{percent(data?.data.male, data?.data.total)}%</div>
           </div>
           <div className="box-right__item">
-            <div className="dot" style={{ backgroundColor: '#207B8B' }}></div>
+            <div className="dot" style={{ backgroundColor: '#66D8FD' }}></div>
             <p className="label">Nữ giới</p>
 
             <div>{data?.data.female}</div>

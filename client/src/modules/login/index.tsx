@@ -12,6 +12,7 @@ import { Button, Form, Input } from 'antd';
 import { url } from '../../routes/listRouter';
 import { useLoginMutation } from '../../api/authApi';
 import { login } from '../../redux/reducer/authReducer';
+import { Link } from 'react-router-dom';
 export const Login = () => {
   const dispatch = useAppDispatch();
   const navigation = useNavigate();
@@ -72,6 +73,10 @@ export const Login = () => {
             </Button>
           </Form.Item>
         </Form>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <div>Bạn chưa có tài khoản?</div>
+          <Link to="/register">Đăng ký</Link>
+        </div>
         <div className="copy-right">© Hồ Minh Hải</div>
       </div>
     </div>

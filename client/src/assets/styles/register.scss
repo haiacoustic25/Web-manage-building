@@ -1,0 +1,48 @@
+.registerWrap {
+  background: #eef1f6 url('../../assets/img/login.jpg') center center no-repeat;
+  width: 100vw;
+  height: 100vh;
+  &__form {
+    width: 630px;
+    background: #ffffff;
+    margin: 0 auto;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &--img {
+      height: 80px;
+      padding-top: 5%;
+      img {
+        height: 100%;
+      }
+    }
+    &--text {
+      font-weight: 700;
+      font-size: 17px;
+      line-height: 24px;
+      color: #282828;
+      text-align: center;
+      min-height: 48px;
+      margin-bottom: 3%;
+    }
+    .break-line {
+      width: 40%;
+      background: #4b4b4b;
+      height: 1px;
+      display: block;
+      margin: 3% auto;
+    }
+  }
+  .form-control {
+    text-align: center;
+    width: 50%;
+    margin-top: 10px;
+  }
+  .copy-right {
+    color: #5200ff;
+    font-size: 14px;
+    margin-top: 50%;
+  }
+}

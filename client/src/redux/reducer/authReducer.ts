@@ -6,13 +6,11 @@ import { RootState } from '../store';
 // Slice
 
 type UserSliceType = {
-  status: number;
   access_token: string;
-  user: object | null;
+  user: UserType | null;
 };
 
 const initialState: UserSliceType = {
-  status: APISTATUS.NULL,
   access_token: '',
   user: null,
 };
@@ -21,7 +19,10 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logout: () => initialState,
+    logout: (state) => {
+      state.user = null;
+      state.access_token = '';
+    },
     login: (state, action: PayloadAction<AnyAction>) => {
       state.user = action.payload.data;
       state.access_token = action.payload.token;

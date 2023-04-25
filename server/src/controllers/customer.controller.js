@@ -74,8 +74,7 @@ const create = async (req, res) => {
     district,
     ward,
     gender,
-    username,
-    password,
+
     citizenIdentificationNumber,
     email,
     roomId,
@@ -87,15 +86,9 @@ const create = async (req, res) => {
   try {
     // console.log(req.file);
     if (!req.file) return res.status(202).json({ success: false });
-    const user = await prisma.$queryRaw`
-      SELECT * FROM manage_building.customer
-      WHERE username = ${username}
-    `;
-    // console.log({ user });
-    if (user.length) return res.status(201).json({ success: false, message: 'Username exits' });
+
     // return res.json({ success: true });
     const id = uuidv4();
-    const hashPassword = await argon.hash(password);
     const newCustomer = {
       id,
       name,
@@ -104,8 +97,6 @@ const create = async (req, res) => {
       gender: Number(gender),
       district,
       ward,
-      username,
-      password: hashPassword,
       citizenIdentificationNumber,
       email,
       status: Number(status),
@@ -189,7 +180,6 @@ const getAllCustomer = async (req, res) => {
         manage_building.customer.id, 
         manage_building.customer.email, 
         manage_building.customer.avatar, 
-        manage_building.customer.username, 
         manage_building.customer.city,
         manage_building.customer.district, 
         manage_building.customer.ward,
@@ -277,7 +267,7 @@ const update = async (req, res) => {
     });
 
     if (!result) return res.status(201).json({ success: false });
-    if (roomId) {
+    if (roomId | status) {
       await setStatusRoom(currentRoomId[0].roomId);
       await setStatusRoom(roomId);
     }

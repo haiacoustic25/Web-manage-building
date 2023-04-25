@@ -117,14 +117,6 @@ const PaymentComponent: FunctionComponent<Props> = ({ open, onClose, room }: Pro
                   {room?.area} m<sup>2</sup>
                 </span>
               </div>
-              <div className="item">
-                <h5 className="label">Nội thất: </h5>
-                <span>
-                  {room?.furniture?.map((item: number) => (
-                    <p>- {getFurniture(item)}</p>
-                  ))}
-                </span>
-              </div>
             </div>
           </div>
           <div className="payment__form">

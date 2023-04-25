@@ -16,7 +16,7 @@ export const formatMoney = (money: any) => {
 };
 
 export const percent = (value: number, total: number) => {
-  return ((value * 100) / total).toFixed(0);
+  return ((value * 100) / total).toFixed(0) || 0;
 };
 
 export const getMonth = (date: any) => {

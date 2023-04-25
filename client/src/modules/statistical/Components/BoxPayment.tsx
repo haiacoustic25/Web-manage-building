@@ -17,8 +17,8 @@ const BoxPayment = () => {
       {
         label: 'Tỷ lệ',
         data: [data?.data.paid, data?.data.unpaid],
-        backgroundColor: ['#66D8FD', '#207B8B'],
-        borderColor: ['#66D8FD', '#207B8B'],
+        backgroundColor: ['#207B8B', '#66D8FD'],
+        borderColor: ['#207B8B', '#66D8FD'],
         borderWidth: 1,
       },
     ],
@@ -39,7 +39,7 @@ const BoxPayment = () => {
         </div>
         <div className="box-right">
           <div className="box-right__item">
-            <div className="dot" style={{ backgroundColor: '#66D8FD' }}></div>
+            <div className="dot" style={{ backgroundColor: '#207B8B' }}></div>
             <p className="label">Đã thanh toán</p>
 
             <div>{data?.data.paid}</div>
@@ -47,7 +47,7 @@ const BoxPayment = () => {
             <div className="grey">{percent(data?.data.paid, data?.data.total)}%</div>
           </div>
           <div className="box-right__item">
-            <div className="dot" style={{ backgroundColor: '#207B8B' }}></div>
+            <div className="dot" style={{ backgroundColor: '#66D8FD' }}></div>
             <p className="label">Chưa thanh toán</p>
 
             <div>{data?.data.unpaid}</div>

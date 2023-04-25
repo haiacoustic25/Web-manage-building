@@ -1,6 +1,8 @@
 const { PrismaClient } = require('@prisma/client');
 const { v4: uuidv4 } = require('uuid');
-
+const { statusCustomer } = require('../constants/status');
+const nodeMailer = require('nodemailer');
+const { formatMoney } = require('../utils');
 const prisma = new PrismaClient();
 const ReportModel = prisma.report;
 
@@ -102,11 +104,24 @@ const getAll = async (req, res) => {
 const update = async (req, res) => {
   const { id, domesticWaterNumber, electricNumber, status } = req.body;
   try {
+    const report = await prisma.$queryRaw`
+      SELECT * FROM manage_building.report
+      WHERE id = ${id}
+    `;
+    console.log(report);
+    const { payment, environmentFee, domesticWaterFee, electricFee, internetFee } = report[0];
+    const totalPayment =
+      Number(payment) +
+      Number(environmentFee) +
+      Number(domesticWaterNumber) * Number(domesticWaterFee) +
+      Number(electricNumber) * Number(electricFee) +
+      Number(internetFee);
     const result = await ReportModel.update({
       where: { id },
       data: {
         domesticWaterNumber,
         electricNumber,
+        totalPayment,
         status,
       },
     });
@@ -120,6 +135,7 @@ const update = async (req, res) => {
     return res.status(500).json({ error: error });
   }
 };
+
 const ReportController = { create, getAll, update };
 
 module.exports = ReportController;

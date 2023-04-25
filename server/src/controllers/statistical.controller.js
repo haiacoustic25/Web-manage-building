@@ -186,6 +186,29 @@ const statisticalReport = async (req, res) => {
   }
 };
 
+const StatisticalRevenue = async (req, res) => {
+  const { dateStart, dateEnd, buildingId } = req;
+  try {
+    const monthStart = dateStart.getMonth() + 1;
+    const monthEnd = dateEnd.getMonth() + 1;
+    // month.map((item) => {
+
+    // })
+
+    const result = await prisma.$queryRaw`
+      SELECT SUM(manage_building.report.totalPayment) as totalPayment
+      FROM manage_building.room
+      INNER JOIN manage_building.report
+      ON manage_building.room.id = manage_building.report.roomId
+      AND buildingId = ${buildingId}
+      AND manage_building.report.status = ${statusReport.PAID}
+    `;
+  } catch (error) {
+    console.log({ error });
+    return res.status(500).json({ error: error });
+  }
+};
+
 const StatisticalController = {
   statisticalCustomer,
   statisticalRoom,

@@ -86,7 +86,7 @@ const getAllBuildings = async (req, res) => {
 };
 
 const update = async (req, res) => {
-  const { id, city, district, ward, amountRooms } = req.body;
+  const { id, city, district, ward, amountRooms, numberOfFloors } = req.body;
   try {
     const result = await BuildingModel.update({
       where: { id },
@@ -95,6 +95,7 @@ const update = async (req, res) => {
         district,
         ward,
         amountRooms,
+        numberOfFloors: Number(numberOfFloors),
       },
     });
 

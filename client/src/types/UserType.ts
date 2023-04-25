@@ -1,5 +1,6 @@
 export type UserType = {
   id: String;
+  avatar: String;
   name: String;
   city: String;
   district: String;

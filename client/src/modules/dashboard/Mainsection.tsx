@@ -7,19 +7,18 @@ import {
 import { Button, Form, Modal, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import renderComponentWithConfig from '../../HOC/component-with-config';
 import { useGetAllBuildingQuery, useRemoveBuildingMutation } from '../../api/buildingApi';
 import Header from '../../components/header';
 import SearchWrapper from '../../components/searchWrapper';
 import SelectAddress from '../../components/selectAddress';
+import { RootState, useAppSelector } from '../../redux/store';
 import { BuildingType } from '../../types/BuildingType';
 import ItemBuilding from './ItemBuilding';
 import ModalBuilding from './modal/ModalBuilding';
-type Props = {
-  user: any;
-};
-const Mainsection = ({ user }: Props) => {
+
+const Mainsection = () => {
   const [form] = Form.useForm();
+  const user = useAppSelector((state: RootState) => state.dataUser.user);
   const [filter, setFilter] = useState({
     userId: user?.id,
     city: '',
@@ -118,6 +117,7 @@ const Mainsection = ({ user }: Props) => {
           <div className="dashboard__list">
             {data?.data.map((item: any) => (
               <ItemBuilding
+                key={item?.id}
                 item={item}
                 _handleEditBuilding={_handleEditBuilding}
                 showConfirm={showConfirm}
@@ -141,4 +141,4 @@ const Mainsection = ({ user }: Props) => {
   );
 };
 
-export default renderComponentWithConfig(Mainsection);
+export default Mainsection;

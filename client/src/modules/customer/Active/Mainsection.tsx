@@ -314,7 +314,7 @@ const Mainsection = () => {
               </Col>
 
               <Col span={6}>
-                <Form.Item label="Chọn phòng trọ" name="roomId">
+                <Form.Item label="Chọn phòng" name="roomId">
                   <Select style={{ width: '100%' }}>
                     <Select.Option value={-1}>Tất cả</Select.Option>
                     {dataRoom?.data.map((_: any) => (

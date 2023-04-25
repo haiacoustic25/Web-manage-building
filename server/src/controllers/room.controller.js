@@ -20,13 +20,7 @@ const getAllRooms = async (req, res) => {
 
     if (!result) return res.status(500).json({ success: false });
 
-    const convertResult = result.map((item) => {
-      return {
-        ...item,
-        furniture: JSON.parse(item.furniture),
-      };
-    });
-    return res.status(200).json({ success: true, message: 'Successfully!!!', data: convertResult });
+    return res.status(200).json({ success: true, message: 'Successfully!!!', data: result });
   } catch (error) {
     console.log({ error });
     return res.status(500).json({ error: error });
@@ -44,6 +38,8 @@ const update = async (req, res) => {
     electricFee,
     floor,
     furniture,
+    dateStart,
+    dateEnd,
   } = req.body;
   try {
     const result = await RoomModel.update({
@@ -58,6 +54,8 @@ const update = async (req, res) => {
         domesticWaterFee,
         floor,
         furniture: JSON.stringify(furniture),
+        dateStart: new Date(dateStart),
+        dateEnd: new Date(dateEnd),
       },
     });
 

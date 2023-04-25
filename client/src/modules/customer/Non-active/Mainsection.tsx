@@ -151,7 +151,7 @@ const Mainsection = () => {
       // confirmLoading:isLoading,
       cancelText: 'Hủy',
       onOk() {
-        handleUpdateStatus({ ...item, status: 0 });
+        handleUpdateStatus({ ...item, status: 1 });
       },
       onCancel() {
         console.log('Cancel');

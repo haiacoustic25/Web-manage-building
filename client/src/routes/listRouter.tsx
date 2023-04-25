@@ -4,6 +4,9 @@ import { RouterType } from '../types/RouterType';
 import { lazy } from 'react';
 
 const Login = lazy(() => import('../modules/login').then(({ Login }) => ({ default: Login })));
+const Register = lazy(() =>
+  import('../modules/register').then(({ Register }) => ({ default: Register }))
+);
 
 const RoomComponent = lazy(() =>
   import('../modules/rooms').then(({ RoomComponent }) => ({
@@ -36,17 +39,40 @@ const ReportComponent = lazy(() =>
   }))
 );
 
+const BookingComponent = lazy(() =>
+  import('../modules/booking').then(({ BookingComponent }) => ({
+    default: BookingComponent,
+  }))
+);
+const FurnitureComponent = lazy(() =>
+  import('../modules/furniture').then(({ FurnitureComponent }) => ({
+    default: FurnitureComponent,
+  }))
+);
+const HistoryEmailComponent = lazy(() =>
+  import('../modules/historySendEmail').then(({ HistoryEmailComponent }) => ({
+    default: HistoryEmailComponent,
+  }))
+);
+
 export const url = {
   login: '/login',
+  register: '/register',
   dashboard: '/',
   statistical: '/statistical',
   userManager: '/user-manager',
   userNonActiveManager: '/user-manager-non-active',
   roomManager: '/room',
   reportManager: '/report',
+  bookingManager: '/booking',
+  furnitureManager: '/furniture',
+  history: '/history',
 };
 
-export const RouterPublic: RouterType[] = [{ url: url.login, element: <Login /> }];
+export const RouterPublic: RouterType[] = [
+  { url: url.login, element: <Login /> },
+  { url: url.register, element: <Register /> },
+];
 
 export const RouterAdmin: RouterType[] = [
   { url: url.statistical, element: <StatisticalComponent /> },
@@ -55,4 +81,7 @@ export const RouterAdmin: RouterType[] = [
   { url: url.userNonActiveManager, element: <UserNonActiveComponent /> },
   { url: url.dashboard, element: <DashboardComponent /> },
   { url: url.reportManager, element: <ReportComponent /> },
+  { url: url.bookingManager, element: <BookingComponent /> },
+  { url: url.furnitureManager, element: <FurnitureComponent /> },
+  { url: url.history, element: <HistoryEmailComponent /> },
 ];

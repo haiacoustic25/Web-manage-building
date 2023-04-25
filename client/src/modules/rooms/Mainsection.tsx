@@ -125,7 +125,6 @@ const Mainsection = () => {
       getMonth(date) === new Date().getMonth() + 1 && getYear(date) == new Date().getFullYear()
     );
   };
-  console.log(new Date().getFullYear());
 
   const columns: ColumnsType<DataType> = [
     {

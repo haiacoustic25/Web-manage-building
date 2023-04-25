@@ -76,6 +76,25 @@ export const reportApi = createApi({
       },
       invalidatesTags: (result, error, body) => (error ? [] : [{ type: 'Reports' }]),
     }),
+    sendEmailPayment: build.mutation({
+      query: (body) => {
+        try {
+          return {
+            url: '/report/send-email-payment',
+            method: 'POST',
+            data: body,
+          };
+        } catch (error: any) {
+          throw new CustomError(error.message);
+        }
+      },
+      // invalidatesTags: (result, error, body) => (error ? [] : [{ type: 'Reports' }]),
+    }),
   }),
 });
-export const { useGetAllReportQuery, useAddReportMutation, useUpdateReportMutation } = reportApi;
+export const {
+  useGetAllReportQuery,
+  useAddReportMutation,
+  useUpdateReportMutation,
+  useSendEmailPaymentMutation,
+} = reportApi;

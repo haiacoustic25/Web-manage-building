@@ -5,13 +5,18 @@ import {
   ExportOutlined,
   ReloadOutlined,
   SearchOutlined,
+  WechatOutlined,
 } from '@ant-design/icons';
 import { Button, Col, DatePicker, Dropdown, Form, Row, Select, Space, Tooltip } from 'antd';
 import Table, { ColumnsType } from 'antd/es/table';
 import { useEffect, useState } from 'react';
 
 import dayjs from 'dayjs';
-import { useGetAllReportQuery, useUpdateReportMutation } from '../../api/reportApi';
+import {
+  useGetAllReportQuery,
+  useSendEmailPaymentMutation,
+  useUpdateReportMutation,
+} from '../../api/reportApi';
 import SearchWrapper from '../../components/searchWrapper';
 import { RootState, useAppSelector } from '../../redux/store';
 import { ReportType } from '../../types/ReportType';
@@ -19,6 +24,7 @@ import { formatMoney } from '../../utils';
 import formatDate from '../../utils/formatDate';
 import ModalDetailReport from './Modal/DetailReport';
 import { toast } from 'react-toastify';
+import EditReport from './Modal/EditReport';
 
 interface DataType {
   key: string;
@@ -34,7 +40,7 @@ const Mainsection = () => {
   const [form] = Form.useForm();
   const buildingId = useAppSelector((state: RootState) => state.buildingId.buildingId);
   const [isOpenModalDetail, setIsOpenModalDetail] = useState<boolean>(false);
-  const [isModalOpenAdd, setIsModalOpenAdd] = useState(false);
+  const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
   const [filter, setFilter] = useState({
     buildingId,
     roomId: '',
@@ -45,7 +51,7 @@ const Mainsection = () => {
     pageSize: 10,
   });
   const [handleUpdate, resultUpdate] = useUpdateReportMutation();
-  const [isModalOpenAddCustomer, setIsModalOpenAddCustomer] = useState(false);
+  const [sendEmail, resultSendEmail] = useSendEmailPaymentMutation();
   const [reportSelect, setReportSelect] = useState<ReportType | null>(null);
   // const {data,iss}
   const { data, isFetching } = useGetAllReportQuery(filter, {
@@ -60,6 +66,14 @@ const Mainsection = () => {
   const _handleOpenModalDetail = (item: ReportType) => {
     setReportSelect(item);
     setIsOpenModalDetail(true);
+  };
+  const _handleCancelModalEdit = () => {
+    setIsModalOpenEdit(false);
+    setReportSelect(null);
+  };
+  const _handleOpenModalEdit = (item: ReportType) => {
+    setReportSelect(item);
+    setIsModalOpenEdit(true);
   };
 
   const _handleFetchDefaultApi = () => {
@@ -102,8 +116,13 @@ const Mainsection = () => {
 
   useEffect(() => {
     if (resultUpdate.isSuccess) toast.success('Xác nhận thanh toán thành công.');
-    if (resultUpdate.isError) toast.success('Xác nhận thanh toán thất bại.');
-  }, [resultUpdate]);
+    if (resultUpdate.isError) toast.error('Xác nhận thanh toán thất bại.');
+    if (resultSendEmail.isSuccess && resultSendEmail.data.success)
+      toast.success('Gửi thông báo thành công.');
+    if (resultSendEmail.isSuccess && !resultSendEmail.data.success)
+      toast.error('Kết nối tài khoản email thất bại.');
+    if (resultSendEmail.isError) toast.error('Gửi thông báo thất bại.');
+  }, [resultUpdate, resultSendEmail]);
 
   const columns: ColumnsType<DataType> = [
     {
@@ -167,6 +186,7 @@ const Mainsection = () => {
   ];
 
   const items = (item: any) => {
+    console.log({ item });
     return [
       {
         key: '1',
@@ -189,7 +209,17 @@ const Mainsection = () => {
         icon: <EditFilled />,
         label: 'Sửa',
         onClick: () => {
-          // _showModal();
+          _handleOpenModalEdit(item);
+          // setRoomSelect(item);
+        },
+      },
+      {
+        key: '4',
+        icon: <WechatOutlined />,
+        label: 'Gửi thông báo',
+        onClick: () => {
+          sendEmail({ id: item.id });
+          // _handleOpenModalEdit(item);
           // setRoomSelect(item);
         },
       },
@@ -260,6 +290,11 @@ const Mainsection = () => {
         data={reportSelect}
         isModalOpen={isOpenModalDetail}
         handleCancel={_handleCancelModalDetail}
+      />
+      <EditReport
+        report={reportSelect}
+        isModalOpen={isModalOpenEdit}
+        handleCancel={_handleCancelModalEdit}
       />
     </>
   );

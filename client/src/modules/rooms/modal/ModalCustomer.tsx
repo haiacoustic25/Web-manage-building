@@ -115,28 +115,19 @@ const ModalCustomer = ({ isModalOpen, handleCancel, room, fetchApi, refetch }: P
               </Row>
             </Col>
           </Row>
-
-          <Form.Item
-            label="Tên đăng nhập"
-            name="username"
-            rules={[{ required: true, message: 'Không được để trống' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Mật khẩu"
-            name="password"
-            rules={[{ required: true, message: 'Không được để trống' }]}
-          >
-            <Input.Password />
-          </Form.Item>
           <Form.Item
             label="Số căn cước công dân"
             name="citizenIdentificationNumber"
             rules={[{ required: true, message: 'Không được để trống' }]}
           >
             <Input />
+          </Form.Item>
+          <Form.Item
+            label="email"
+            name="email"
+            rules={[{ required: true, message: 'Không được để trống' }]}
+          >
+            <Input type="email" />
           </Form.Item>
           <SelectAddress required={true} />
           <Row>

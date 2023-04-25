@@ -1,14 +1,16 @@
 import {
   AccountBookOutlined,
   BarChartOutlined,
+  DollarOutlined,
   HomeOutlined,
+  MacCommandOutlined,
   UserOutlined,
+  HistoryOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import renderComponentWithConfig from '../../HOC/component-with-config';
 import '../../assets/styles/sidebar.scss';
 import { url } from '../../routes/listRouter';
 
@@ -38,6 +40,9 @@ const items: MenuItem[] = [
   getItem('Thống kê', '0', <BarChartOutlined />),
   getItem('Quản lý hóa đơn', 'sub3', <AccountBookOutlined />, [getItem('Quản lý hóa đơn', '5')]),
   getItem('Quản lý phòng trọ', 'sub1', <HomeOutlined />, [getItem('Quản lý phòng trọ', '1')]),
+  getItem('Quản lý tiền cọc', '6', <DollarOutlined />),
+  getItem('Quản lý nội thất', '7', <MacCommandOutlined />),
+  getItem('Lịch sử gửi Email', '8', <HistoryOutlined />),
   getItem('Quản lý người thuê', 'sub2', <UserOutlined />, [
     getItem('Quản lý người đang thuê', '3'),
     getItem('Quản lý người đã hủy', '4'),
@@ -68,6 +73,18 @@ const arrContent: ArrContent[] = [
     key: 5,
     url: url.reportManager,
     sub: 'sub3',
+  },
+  {
+    key: 6,
+    url: url.bookingManager,
+  },
+  {
+    key: 7,
+    url: url.furnitureManager,
+  },
+  {
+    key: 8,
+    url: url.history,
   },
 ];
 
@@ -131,4 +148,4 @@ const Sidebar = () => {
   );
 };
 
-export default renderComponentWithConfig(Sidebar);
+export default Sidebar;

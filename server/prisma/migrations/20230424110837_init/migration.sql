@@ -6,8 +6,6 @@ CREATE TABLE `Customer` (
     `phone` VARCHAR(191) NOT NULL,
     `city` VARCHAR(191) NOT NULL,
     `gender` INTEGER NOT NULL,
-    `username` VARCHAR(191) NOT NULL,
-    `password` VARCHAR(191) NOT NULL,
     `district` VARCHAR(191) NOT NULL,
     `ward` VARCHAR(191) NOT NULL,
     `citizenIdentificationNumber` VARCHAR(191) NOT NULL,
@@ -38,6 +36,31 @@ CREATE TABLE `Report` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `Booking` (
+    `id` VARCHAR(191) NOT NULL,
+    `price` DOUBLE NOT NULL,
+    `status` INTEGER NOT NULL DEFAULT 1,
+    `roomId` VARCHAR(191) NOT NULL,
+    `customerId` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Furniture` (
+    `id` VARCHAR(191) NOT NULL,
+    `image` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `price` DOUBLE NOT NULL,
+    `roomId` VARCHAR(191) NOT NULL,
+    `status` INTEGER NOT NULL DEFAULT 1,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `Room` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
@@ -54,7 +77,6 @@ CREATE TABLE `Room` (
     `motorbikeAmount` INTEGER NULL,
     `dateStart` DATETIME(3) NULL,
     `dateEnd` DATETIME(3) NULL,
-    `furniture` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -79,15 +101,15 @@ CREATE TABLE `User` (
     `id` VARCHAR(191) NOT NULL,
     `avatar` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NULL,
+    `password_email` VARCHAR(191) NULL,
     `city` VARCHAR(191) NOT NULL,
     `district` VARCHAR(191) NOT NULL,
     `ward` VARCHAR(191) NOT NULL,
     `phone` VARCHAR(191) NOT NULL,
     `username` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
-    `role` INTEGER NOT NULL DEFAULT 1,
     `status` INTEGER NOT NULL DEFAULT 1,
-    `approveBy` VARCHAR(191) NULL,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `User_username_key`(`username`),
@@ -100,6 +122,12 @@ ALTER TABLE `Customer` ADD CONSTRAINT `Customer_roomId_fkey` FOREIGN KEY (`roomI
 
 -- AddForeignKey
 ALTER TABLE `Report` ADD CONSTRAINT `Report_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Booking` ADD CONSTRAINT `Booking_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Furniture` ADD CONSTRAINT `Furniture_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Room` ADD CONSTRAINT `Room_buildingId_fkey` FOREIGN KEY (`buildingId`) REFERENCES `Building`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

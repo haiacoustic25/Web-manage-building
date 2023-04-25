@@ -9,7 +9,7 @@ import { useEditBuildingMutation } from '../../../api/buildingApi';
 
 type Props = {
   isModalOpen: boolean;
-  userId: string;
+  userId: String | undefined;
   handleCancel: () => void;
   building: BuildingType | null;
 };

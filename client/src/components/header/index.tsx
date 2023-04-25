@@ -1,21 +1,19 @@
-import { DownOutlined, LogoutOutlined, DashboardOutlined } from '@ant-design/icons';
-import { MenuProps, Tooltip } from 'antd';
-import { Dropdown } from 'antd';
+import { DashboardOutlined, DownOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Dropdown, MenuProps, Tooltip } from 'antd';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import renderComponentWithConfig from '../../HOC/component-with-config';
 import logo from '../../assets/img/logo.png';
 import { BASE_URL_AVT } from '../../constants/config';
 import { logout } from '../../redux/reducer/authReducer';
-import { useAppDispatch } from '../../redux/store';
-import { Link } from 'react-router-dom';
-
+import { RootState, useAppDispatch, useAppSelector } from '../../redux/store';
+import '../../assets/styles/layoutWrapper.scss';
 type Props = {
-  user: any;
   hasToDashboard?: boolean;
 };
 
-const Header = ({ user, hasToDashboard = true }: Props) => {
+const Header = ({ hasToDashboard = true }: Props) => {
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state: RootState) => state.dataUser.user);
   // const location = useLocation();
   const handleLogout = () => {
     dispatch(logout());
@@ -72,4 +70,4 @@ const Header = ({ user, hasToDashboard = true }: Props) => {
   );
 };
 
-export default renderComponentWithConfig(Header);
+export default Header;

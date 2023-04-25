@@ -10,6 +10,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model HistoryEmail {
+  id String @id
+  title String
+  content String
+  customerId String
+  createAt DateTime @default(now())
+}
+
 model Customer {
   id String @id 
   name String
@@ -17,8 +25,6 @@ model Customer {
   phone String
   city String
   gender Int
-  username String
-  password String
   district String
   ward String 
   citizenIdentificationNumber String
@@ -45,6 +51,26 @@ model Report {
   createAt DateTime @default(now())
 }
 
+model Booking {
+  id String @id
+  price Float 
+  status Int @default(1) // 1:đã cọc 2: đã trả
+  roomId String
+  customerId String
+  room Room @relation(fields: [roomId], references: [id],onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Furniture{
+  id String @id
+  image String
+  name String
+  price Float
+  roomId String
+  room Room @relation(fields: [roomId], references: [id],onDelete: Cascade)
+  status Int @default(1) // 1:mới 2: cũ 3: thanh lý
+  createdAt DateTime @default(now())
+}
 model Room {
   id String @id 
   name String 
@@ -58,12 +84,13 @@ model Room {
   internetFee Float?
   environmentFee Float?
   customers Customer[]
+  booking Booking[]
   reports Report[]
+  furnitures Furniture[]
   buildingId String
   motorbikeAmount Int?
   dateStart DateTime?
   dateEnd DateTime?
-  furniture String?
   building Building @relation(fields: [buildingId],references: [id],onDelete: Cascade, onUpdate: Cascade)
 }
 
@@ -86,15 +113,15 @@ model User {
   id String @id 
   avatar String
   name String 
+  email String?
+  password_email String?
   city String
   district String
   ward String 
   phone String 
   username String @unique 
   password String @unique 
-  role Int @default(1) //default 0: admin 1: customer
   status Int @default(1) //default 1: non-active 2: active;
-  approveBy String? 
   createAt DateTime @default(now())
   buildings Building[]
 }
