@@ -17,7 +17,9 @@ const router = express.Router();
 
 router.post('/register', upload.single('file'), userController.register);
 router.post('/login', userController.login);
-router.get('/getUserByToken', userController.getUserByToken);
+router.post('/changePassword', userController.updatePassword);
+router.post('/update', upload.single('file'), userController.update);
+// router.get('/getUserByToken', userController.getUserByToken);
 // router.post("/getAllBuildingsByUserId", userController.getAllBuildings);
 
 module.exports = router;

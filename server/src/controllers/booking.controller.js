@@ -6,13 +6,14 @@ const BookingModel = prisma.booking;
 // const RoomModel = prisma.room;
 
 const create = async (req, res) => {
-  const { roomId, price } = req.body;
+  const { roomId, price, customerName } = req.body;
   try {
     const id = uuidv4();
     const booking = {
       id,
       roomId,
       price: +price,
+      customerName,
     };
 
     const result = await BookingModel.create({ data: booking });
@@ -36,6 +37,7 @@ const getAll = async (req, res) => {
         SELECT manage_building.booking.status,
             manage_building.booking.price,
             manage_building.booking.id,
+            manage_building.booking.customerName,
             manage_building.booking.roomId,
             manage_building.booking.createdAt,
             manage_building.room.name as roomName

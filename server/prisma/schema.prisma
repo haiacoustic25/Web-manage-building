@@ -16,6 +16,7 @@ model HistoryEmail {
   content String
   customerId String
   createAt DateTime @default(now())
+  customer Customer @relation(fields: [customerId], references: [id],onDelete: Cascade,onUpdate: Cascade )
 }
 
 model Customer {
@@ -32,6 +33,7 @@ model Customer {
   dateOfEntry DateTime @default(now())
   status Int @default(1) // default 1: active, 2:non-active
   roomId String
+  hisroties HistoryEmail[]
   room Room @relation(fields: [roomId], references: [id],onDelete: Cascade,onUpdate: Cascade )
 }
 
@@ -56,7 +58,7 @@ model Booking {
   price Float 
   status Int @default(1) // 1:đã cọc 2: đã trả
   roomId String
-  customerId String
+  customerName String
   room Room @relation(fields: [roomId], references: [id],onDelete: Cascade)
   createdAt DateTime @default(now())
 }
@@ -99,6 +101,7 @@ model Building {
   city String
   district String
   ward String
+  address String?
   userId String 
   user User @relation(fields: [userId], references: [id])
   amountRooms Int
@@ -118,10 +121,15 @@ model User {
   city String
   district String
   ward String 
+  dateOfBirth DateTime?
+  address String?
+  citizenIdentificationNumber String?
+  dateRange DateTime?
+  issuedBy String?
+  permanentAddress String?
   phone String 
   username String @unique 
   password String @unique 
-  status Int @default(1) //default 1: non-active 2: active;
   createAt DateTime @default(now())
   buildings Building[]
 }

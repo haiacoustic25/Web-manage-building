@@ -21,7 +21,23 @@ const login = async (req, res) => {
     if (!pass) {
       return res.status(200).json({ success: false, message: 'Wrong password' });
     }
-    const { id, name, avatar, city, district, ward, phone, role, status, approveBy } = user;
+    const {
+      id,
+      name,
+      avatar,
+      city,
+      district,
+      ward,
+      phone,
+      email,
+      password_email,
+      address,
+      citizenIdentificationNumber,
+      dateRange,
+      issuedBy,
+      permanentAddress,
+      dateOfBirth,
+    } = user;
 
     const secretKey = process.env.SECRET_JWT || '';
     // console.log({ secretKey });
@@ -33,7 +49,24 @@ const login = async (req, res) => {
       success: true,
       message: 'Login successful!!!',
       token,
-      data: { id, name, avatar, city, district, ward, phone, username, role, status, approveBy },
+      data: {
+        id,
+        name,
+        avatar,
+        city,
+        district,
+        ward,
+        phone,
+        username,
+        email,
+        password_email,
+        address,
+        citizenIdentificationNumber,
+        dateRange,
+        issuedBy,
+        permanentAddress,
+        dateOfBirth,
+      },
     });
   } catch (error) {
     console.log(error);
@@ -63,11 +96,9 @@ const register = async (req, res) => {
       phone,
       username,
       password: hashPassword,
-
       email,
       password_email,
       status,
-
       avatar: req.file ? req.file.filename : '',
     };
     // console.log({ newUser });
@@ -124,7 +155,6 @@ const getUserByToken = async (req, res) => {
         address,
         phone,
         username,
-
         status,
       },
     });
@@ -132,6 +162,85 @@ const getUserByToken = async (req, res) => {
   return res.send(500);
 };
 
-const userController = { login, register, getUserByToken };
+const update = async (req, res) => {
+  const {
+    id,
+    name,
+    email,
+    password_email,
+    city,
+    district,
+    ward,
+    dateOfBirth,
+    address,
+    citizenIdentificationNumber,
+    dateRange,
+    issuedBy,
+    permanentAddress,
+    phone,
+  } = req.body;
+  try {
+    const dataUpdate = {
+      name,
+      email,
+      password_email,
+      city,
+      district,
+      ward,
+      dateOfBirth: new Date(dateOfBirth),
+      address,
+      citizenIdentificationNumber,
+      dateRange: new Date(dateRange),
+      issuedBy,
+      permanentAddress,
+      phone,
+    };
+    console.log({ dataUpdate });
+    if (req && req.file) {
+      dataUpdate.avatar = req.file.filename;
+    }
+    const result = await UserModel.update({
+      where: { id },
+      data: dataUpdate,
+    });
+    if (!result) return res.status(201).json({ success: false });
+    return res.status(200).json({
+      success: true,
+      message: 'Update successfully !!!',
+    });
+  } catch (error) {
+    console.log({ error });
+    return res.status(500).json({ error: error });
+  }
+};
+
+const updatePassword = async (req, res) => {
+  const { id, prevPassword, newPassword } = req.body;
+  try {
+    const oldPassword = await prisma.$queryRaw`
+      SELECT password FROM manage_building.user
+      WHERE id = ${id};
+    `;
+
+    const { password } = oldPassword[0];
+    console.log({ oldPassword });
+    const pass = await argon.verify(password, prevPassword);
+
+    if (!pass) return res.status(201).json({ success: false, message: 'Incorrect password' });
+    const hashPassword = await argon.hash(newPassword);
+    const result = await UserModel.update({
+      where: { id },
+      data: { password: hashPassword },
+    });
+
+    if (!result) return res.status(201).json({ success: false, message: 'Update fail' });
+
+    return res.status(200).json({ success: true, message: 'Update Successfully' });
+  } catch (error) {
+    console.log({ error });
+    return res.status(500).json({ error: error });
+  }
+};
+const userController = { login, register, getUserByToken, update, updatePassword };
 
 module.exports = userController;

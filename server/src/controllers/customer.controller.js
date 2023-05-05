@@ -74,7 +74,6 @@ const create = async (req, res) => {
     district,
     ward,
     gender,
-
     citizenIdentificationNumber,
     email,
     roomId,
@@ -102,6 +101,7 @@ const create = async (req, res) => {
       status: Number(status),
       roomId,
       avatar: req.file.filename,
+      dateOfEntry: new Date(dateStart),
     };
 
     const result = await CustomerModel.create({ data: newCustomer });

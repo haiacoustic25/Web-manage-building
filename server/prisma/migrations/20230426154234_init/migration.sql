@@ -1,4 +1,15 @@
 -- CreateTable
+CREATE TABLE `HistoryEmail` (
+    `id` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `content` VARCHAR(191) NOT NULL,
+    `customerId` VARCHAR(191) NOT NULL,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `Customer` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
@@ -41,7 +52,7 @@ CREATE TABLE `Booking` (
     `price` DOUBLE NOT NULL,
     `status` INTEGER NOT NULL DEFAULT 1,
     `roomId` VARCHAR(191) NOT NULL,
-    `customerId` VARCHAR(191) NOT NULL,
+    `customerName` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
@@ -87,6 +98,7 @@ CREATE TABLE `Building` (
     `city` VARCHAR(191) NOT NULL,
     `district` VARCHAR(191) NOT NULL,
     `ward` VARCHAR(191) NOT NULL,
+    `address` VARCHAR(191) NULL,
     `userId` VARCHAR(191) NOT NULL,
     `amountRooms` INTEGER NOT NULL,
     `status` INTEGER NOT NULL DEFAULT 1,
@@ -106,16 +118,24 @@ CREATE TABLE `User` (
     `city` VARCHAR(191) NOT NULL,
     `district` VARCHAR(191) NOT NULL,
     `ward` VARCHAR(191) NOT NULL,
+    `dateOfBirth` DATETIME(3) NULL,
+    `address` VARCHAR(191) NULL,
+    `citizenIdentificationNumber` VARCHAR(191) NULL,
+    `dateRange` DATETIME(3) NULL,
+    `issuedBy` VARCHAR(191) NULL,
+    `permanentAddress` VARCHAR(191) NULL,
     `phone` VARCHAR(191) NOT NULL,
     `username` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
-    `status` INTEGER NOT NULL DEFAULT 1,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `User_username_key`(`username`),
     UNIQUE INDEX `User_password_key`(`password`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `HistoryEmail` ADD CONSTRAINT `HistoryEmail_customerId_fkey` FOREIGN KEY (`customerId`) REFERENCES `Customer`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Customer` ADD CONSTRAINT `Customer_roomId_fkey` FOREIGN KEY (`roomId`) REFERENCES `Room`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

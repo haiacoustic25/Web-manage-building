@@ -186,23 +186,48 @@ const statisticalReport = async (req, res) => {
   }
 };
 
-const StatisticalRevenue = async (req, res) => {
-  const { dateStart, dateEnd, buildingId } = req;
+const statisticalRevenue = async (req, res) => {
+  const { dateStart, dateEnd, buildingId } = req.body;
   try {
-    const monthStart = dateStart.getMonth() + 1;
-    const monthEnd = dateEnd.getMonth() + 1;
-    // month.map((item) => {
+    // const monthStart = dateStart.getMonth() + 1;
+    // const monthEnd = dateEnd.getMonth() + 1;
+    const monthStart = 1;
+    const monthEnd = 4;
 
-    // })
+    // const arrMonth = Array.from({ length: monthEnd }, (_, i) => i + 1 >= monthStart);
 
+    // const arrMonth = Array.from(Array(4).keys());
+    // console.log({ arrMonth });
     const result = await prisma.$queryRaw`
-      SELECT SUM(manage_building.report.totalPayment) as totalPayment
+      SELECT manage_building.report.totalPayment,
+      manage_building.report.createAt
       FROM manage_building.room
       INNER JOIN manage_building.report
       ON manage_building.room.id = manage_building.report.roomId
       AND buildingId = ${buildingId}
       AND manage_building.report.status = ${statusReport.PAID}
     `;
+
+    const getMontAndYear = (value) => {
+      return value.toISOString().substring(0, 7);
+    };
+
+    let distict_dates = [...new Set(result.map((a) => getMontAndYear(a.createAt)))];
+    let reduced = distict_dates.map((a) => {
+      const arrTotal = result.filter((a1) => a1.createAt.toISOString().startsWith(a));
+      const totalPayment = arrTotal.reduce((sum, a) => sum + a.totalPayment, 0);
+
+      return {
+        totalPayment: totalPayment,
+        createdAt: a,
+      };
+    });
+
+    const data = reduced
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .filter((_, index) => index < 6);
+    // console.log(data);
+    return res.status(200).json({ success: true, data: data });
   } catch (error) {
     console.log({ error });
     return res.status(500).json({ error: error });
@@ -214,6 +239,7 @@ const StatisticalController = {
   statisticalRoom,
   statisticalGender,
   statisticalReport,
+  statisticalRevenue,
 };
 
 module.exports = StatisticalController;

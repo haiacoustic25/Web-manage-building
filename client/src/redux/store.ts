@@ -14,6 +14,7 @@ import { reportApi } from '../api/reportApi';
 import { statisticalApi } from '../api/statisticalApi';
 import { bookingApi } from '../api/bookingApi';
 import { furnitureApi } from '../api/furnitureApi';
+import { historyApi } from '../api/historyApt';
 
 // const localStorageMiddleware = ({ getState }: any) => {
 //   return (next: any) => (action: any) => {
@@ -32,6 +33,7 @@ const rootReducer = combineReducers({
   dataUser: authSlice.reducer,
   buildingId: buildingSlice.reducer,
   [authApi.reducerPath]: authApi.reducer,
+  [historyApi.reducerPath]: historyApi.reducer,
   [bookingApi.reducerPath]: bookingApi.reducer,
   [statisticalApi.reducerPath]: statisticalApi.reducer,
   [reportApi.reducerPath]: reportApi.reducer,
@@ -59,6 +61,7 @@ export const store = configureStore({
       statisticalApi.middleware,
       bookingApi.middleware,
       furnitureApi.middleware,
+      historyApi.middleware,
       rtkQueryError
     ),
 });

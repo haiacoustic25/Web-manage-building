@@ -1,49 +1,39 @@
 const { PrismaClient } = require('@prisma/client');
 const { v4: uuidv4 } = require('uuid');
+const { statusCustomer } = require('../constants/status');
+const nodeMailer = require('nodemailer');
+const { formatMoney } = require('../utils');
 
 const prisma = new PrismaClient();
-const BookingModel = prisma.booking;
+const HistoryEmailModel = prisma.historyEmail;
 // const RoomModel = prisma.room;
 
-const create = async (req, res) => {
-  const { roomId, price } = req.body;
-  try {
-    const id = uuidv4();
-    const booking = {
-      id,
-      roomId,
-      price: +price,
-    };
-
-    const result = await BookingModel.create({ data: booking });
-
-    return res.status(200).json({ success: true, message: 'Create successfully!!!', data: result });
-  } catch (error) {
-    console.log({ error });
-    return res.status(500).json({ error: error });
-  }
-};
-
 const getAll = async (req, res) => {
-  const { roomId, status, pageIndex, pageSize } = req.body;
+  const { name, buildingId, pageIndex, pageSize } = req.body;
   try {
+    const nameSearch = name + '%';
     const totalRow = await prisma.$queryRaw`
-        SELECT COUNT(id) as totalRow FROM manage_building.booking
-        WHERE (${roomId || null} is null or roomId = ${roomId})
-        AND (${status || null} is null or status = ${status})
+        SELECT COUNT(manage_building.historyemail.id) as totalRow 
+        FROM manage_building.historyemail INNER JOIN manage_building.customer
+        ON manage_building.historyemail.customerId = manage_building.customer.id
+        INNER JOIN manage_building.room 
+        ON manage_building.room.id = manage_building.customer.roomId
+        WHERE (${name || null} is null or manage_building.customer.name LIKE ${nameSearch}) 
+        AND (buildingId = ${buildingId})
     `;
     const result = await prisma.$queryRaw`
-        SELECT manage_building.booking.status,
-            manage_building.booking.price,
-            manage_building.booking.id,
-            manage_building.booking.roomId,
-            manage_building.booking.createdAt,
-            manage_building.room.name as roomName
-        FROM manage_building.booking INNER JOIN manage_building.room 
-        ON manage_building.booking.roomId = manage_building.room.id
-        WHERE (${roomId || null} is null or manage_building.booking.roomId = ${roomId})
-        AND (${status || null} is null or manage_building.booking.status = ${status})
-        LIMIT ${pageSize} OFFSET ${pageSize * (pageIndex - 1)}
+      SELECT manage_building.historyemail.id,
+      manage_building.historyemail.title,
+      manage_building.historyemail.content,
+      manage_building.customer.name as customerName,
+      manage_building.historyemail.createAt
+      FROM manage_building.historyemail INNER JOIN manage_building.customer
+      ON manage_building.historyemail.customerId = manage_building.customer.id
+      INNER JOIN manage_building.room 
+      ON manage_building.room.id = manage_building.customer.roomId
+      WHERE (${name || null} is null or manage_building.customer.name LIKE ${nameSearch}) 
+      AND (buildingId = ${buildingId})
+      LIMIT ${pageSize} OFFSET ${pageSize * (pageIndex - 1)}
     `;
     if (!result) return res.status(201).json({ success: false });
     return res.status(200).json({
@@ -60,7 +50,6 @@ const getAll = async (req, res) => {
 const sendEmailPayment = async (req, res) => {
   // ubqfomgnsjwxzyxe
   const { id } = req.body;
-  console.log(id);
   try {
     const report = await prisma.$queryRaw`
         SELECT * FROM manage_building.report WHERE id = ${id};
@@ -68,7 +57,7 @@ const sendEmailPayment = async (req, res) => {
     const { roomId, totalPayment, domesticWaterNumber, electricNumber, createAt } = report[0];
 
     const customer = await prisma.$queryRaw`
-        SELECT email
+        SELECT email,id
         FROM manage_building.customer
         WHERE roomId = ${roomId}
         AND status = ${statusCustomer.ACTIVE}
@@ -93,7 +82,6 @@ const sendEmailPayment = async (req, res) => {
         pass: `${passEmail}`,
       },
     });
-    console.log(transport);
     transport.verify(function (error, success) {
       if (error) {
         return res.status(201).json({ success: false, message: 'Wrong password' });
@@ -112,11 +100,25 @@ const sendEmailPayment = async (req, res) => {
               `, // plain text body
               // html: '<b>Hello world?</b>', // html body
             },
-            function (error, info) {
+            async function (error, info) {
               if (error) {
                 return res.status(201).json({ success: false });
               } else {
                 console.log('Email sent: ' + info.response);
+                const id = uuidv4();
+                const newHistory = {
+                  id,
+                  title: `Tiền phòng tháng ${createAt.getMonth() + 1}`,
+                  content: `
+                    Tổng tiền: ${formatMoney(totalPayment)},
+                    Số nước: ${domesticWaterNumber} khối nước,
+                    Số điện: ${electricNumber} kwh
+                  `,
+                  customerId: item.id,
+                };
+                await HistoryEmailModel.create({
+                  data: newHistory,
+                });
               }
             }
           );
@@ -130,6 +132,6 @@ const sendEmailPayment = async (req, res) => {
     return res.status(500).json({ error: error });
   }
 };
-const HistoryController = { create, getAll, sendEmailPayment };
+const HistoryController = { getAll, sendEmailPayment };
 
 module.exports = HistoryController;

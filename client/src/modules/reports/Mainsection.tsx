@@ -12,11 +12,7 @@ import Table, { ColumnsType } from 'antd/es/table';
 import { useEffect, useState } from 'react';
 
 import dayjs from 'dayjs';
-import {
-  useGetAllReportQuery,
-  useSendEmailPaymentMutation,
-  useUpdateReportMutation,
-} from '../../api/reportApi';
+import { useGetAllReportQuery, useUpdateReportMutation } from '../../api/reportApi';
 import SearchWrapper from '../../components/searchWrapper';
 import { RootState, useAppSelector } from '../../redux/store';
 import { ReportType } from '../../types/ReportType';
@@ -25,6 +21,7 @@ import formatDate from '../../utils/formatDate';
 import ModalDetailReport from './Modal/DetailReport';
 import { toast } from 'react-toastify';
 import EditReport from './Modal/EditReport';
+import { useSendEmailPaymentMutation } from '../../api/historyApt';
 
 interface DataType {
   key: string;

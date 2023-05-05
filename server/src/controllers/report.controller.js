@@ -1,8 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const { v4: uuidv4 } = require('uuid');
 const { statusCustomer } = require('../constants/status');
-const nodeMailer = require('nodemailer');
-const { formatMoney } = require('../utils');
+
 const prisma = new PrismaClient();
 const ReportModel = prisma.report;
 

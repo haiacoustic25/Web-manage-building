@@ -6,7 +6,7 @@ const BuildingModel = prisma.building;
 const RoomModel = prisma.room;
 
 const create = async (req, res) => {
-  const { userId, city, district, ward, amountRooms, numberOfFloors } = req.body;
+  const { userId, city, district, ward, amountRooms, numberOfFloors, address } = req.body;
   try {
     const id = uuidv4();
     const building = {
@@ -15,6 +15,7 @@ const create = async (req, res) => {
       city,
       district,
       ward,
+      address,
       amountRooms,
       numberOfFloors,
     };
