@@ -37,7 +37,7 @@ const Mainsection = () => {
 	};
 
 	const columns: ColumnsType<DataType> = [
-		Table.EXPAND_COLUMN,
+		// Table.EXPAND_COLUMN,
 		{
 			title: "Tên người nhận",
 			dataIndex: "customerName",
@@ -58,6 +58,11 @@ const Mainsection = () => {
 	const handleChangePage = (page: any) => {
 		setFilter({ ...filter, pageIndex: page });
 	};
+	const formatData = (data: any) => {
+		return data?.map((item: any) => {
+			return { ...item, key: item.id };
+		});
+	};
 	return (
 		<>
 			<Input
@@ -67,7 +72,7 @@ const Mainsection = () => {
 			/>
 			<Table
 				columns={columns}
-				dataSource={data?.data}
+				dataSource={formatData(data?.data)}
 				loading={isFetching}
 				bordered
 				expandable={{
@@ -77,7 +82,12 @@ const Mainsection = () => {
 							{record.content}
 						</p>
 					),
+
+					// rowExpandable: (record) => record.name !== 'Not Expandable',
 				}}
+				rowClassName={(record, index) =>
+					index % 2 === 0 ? "table-row-light" : "table-row-dark"
+				}
 				pagination={{
 					position: ["bottomRight"],
 					pageSize: 10,

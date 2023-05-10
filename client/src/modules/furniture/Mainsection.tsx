@@ -209,6 +209,9 @@ const Mainsection = () => {
 						showTotal: (total, range) => `${range[0]} - ${range[1]} trong số ${total}`,
 					}}
 					scroll={{ y: 470 }}
+					rowClassName={(record, index) =>
+						index % 2 === 0 ? "table-row-light" : "table-row-dark"
+					}
 				/>
 			</div>
 			<ModalFurniture

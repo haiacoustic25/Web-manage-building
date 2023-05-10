@@ -36,6 +36,7 @@ const create = async (req, res) => {
       electricFee,
       internetFee,
       totalPayment,
+      // createAt: new Date('2023-02-10'),
     };
 
     const result = await ReportModel.create({ data: newReport });

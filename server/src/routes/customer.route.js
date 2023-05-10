@@ -1,7 +1,6 @@
 const express = require('express');
 const multer = require('multer');
 const verifyToken = require('./../middleware/verifyToken.middleware');
-// const upload = multer({ dest: "images/" });
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'images/');

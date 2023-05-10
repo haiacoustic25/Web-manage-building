@@ -79,7 +79,6 @@ const create = async (req, res) => {
     roomId,
     status,
     dateStart,
-    dateEnd,
   } = req.body;
   // console.log({ req });
   try {
@@ -107,11 +106,7 @@ const create = async (req, res) => {
     const result = await CustomerModel.create({ data: newCustomer });
 
     if (!result) return res.status(201).json({ success: false });
-    await prisma.$queryRaw`
-      UPDATE manage_building.Room 
-      SET dateStart = ${dateStart}, dateEnd = ${dateEnd}
-      WHERE id = ${roomId}
-    `;
+
     await setStatusRoom(roomId);
     const room = await prisma.$queryRaw`
       SELECT buildingId
@@ -240,6 +235,7 @@ const update = async (req, res) => {
     email,
     gender,
     roomId,
+    dateStart,
   } = req.body;
   try {
     const dataUpdate = {
@@ -253,6 +249,7 @@ const update = async (req, res) => {
       citizenIdentificationNumber,
       email,
       gender: Number(gender),
+      dateOfEntry: new Date(dateStart),
     };
     if (req && req.file) {
       dataUpdate.avatar = req.file.filename;
