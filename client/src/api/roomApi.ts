@@ -24,17 +24,6 @@ export const roomApi = createApi({
 				}
 			},
 			providesTags(result) {
-				/**
-				 * Cái callback này sẽ chạy mỗi khi getPosts chạy
-				 * Mong muốn là sẽ return về một mảng kiểu
-				 * ```ts
-				 * interface Tags: {
-				 *    type: "Posts";
-				 *    id: string;
-				 *  }[]
-				 *```
-				 * vì thế phải thêm as const vào để báo hiệu type là Read only, không thể mutate
-				 */
 				if (result) {
 					const final = [
 						...result.data.map(() => ({ type: "Rooms" as const })),
@@ -42,8 +31,7 @@ export const roomApi = createApi({
 					];
 					return final;
 				}
-				// const final = [{ type: 'Rooms' as const, id: 'LIST' }]
-				// return final
+
 				return [{ type: "Rooms" }];
 			},
 		}),
@@ -53,6 +41,34 @@ export const roomApi = createApi({
 					return {
 						url: "/room/update",
 						method: "POST",
+						data: body,
+					};
+				} catch (error: any) {
+					throw new CustomError(error.message);
+				}
+			},
+			invalidatesTags: (result, error, body) => (error ? [] : [{ type: "Rooms" }]),
+		}),
+		createRoom: build.mutation({
+			query: (body) => {
+				try {
+					return {
+						url: "/room/create",
+						method: "POST",
+						data: body,
+					};
+				} catch (error: any) {
+					throw new CustomError(error.message);
+				}
+			},
+			invalidatesTags: (result, error, body) => (error ? [] : [{ type: "Rooms" }]),
+		}),
+		removeRoom: build.mutation({
+			query: (body) => {
+				try {
+					return {
+						url: "/room/delete",
+						method: "DELETE",
 						data: body,
 					};
 				} catch (error: any) {
@@ -83,4 +99,6 @@ export const {
 	useLazyGetAllRoomQuery,
 	useEditRoomMutation,
 	useCreateCustomerMutation,
+	useCreateRoomMutation,
+	useRemoveRoomMutation,
 } = roomApi;

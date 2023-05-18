@@ -4,6 +4,7 @@ const { statusCustomer } = require('../constants/status');
 
 const prisma = new PrismaClient();
 const ReportModel = prisma.report;
+const DebtModel = prisma.debt;
 
 const create = async (req, res) => {
   const {
@@ -36,11 +37,26 @@ const create = async (req, res) => {
       electricFee,
       internetFee,
       totalPayment,
-      // createAt: new Date('2023-02-10'),
+      // createAt: new Date('2023-01-10'),
     };
 
     const result = await ReportModel.create({ data: newReport });
     if (!result) return res.status(201).json({ success: false, message: 'Fail' });
+
+    const idDebt = uuidv4();
+    const getMontAndYear = (value) => {
+      return value.toISOString().substring(0, 7);
+    };
+    const resultDebt = await DebtModel.create({
+      data: {
+        id: idDebt,
+        roomId,
+        content: `Tiền trọ tháng ${getMontAndYear(new Date())}`,
+        money: totalPayment,
+      },
+    });
+
+    if (!resultDebt) return res.status(201).json({ success: false, message: 'Fail' });
 
     return res.status(200).json({ success: true, message: 'Create successfully!!!', data: result });
   } catch (error) {

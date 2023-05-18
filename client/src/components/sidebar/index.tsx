@@ -42,6 +42,7 @@ const items: MenuItem[] = [
 	getItem("Quản lý hóa đơn", "sub3", <AccountBookOutlined />, [getItem("Quản lý hóa đơn", "5")]),
 	getItem("Quản lý phòng trọ", "sub1", <HomeOutlined />, [getItem("Quản lý phòng trọ", "1")]),
 	getItem("Quản lý tiền cọc", "6", <DollarOutlined />),
+	getItem("Quản lý công nợ", "10", <DollarOutlined />),
 	getItem("Quản lý nội thất", "7", <MacCommandOutlined />),
 	getItem("Lịch sử gửi Email", "8", <HistoryOutlined />),
 	getItem("Quản lý người thuê", "sub2", <UserOutlined />, [
@@ -92,6 +93,10 @@ const arrContent: ArrContent[] = [
 		key: 9,
 		url: url.setting,
 	},
+	{
+		key: 10,
+		url: url.debt,
+	},
 ];
 
 const Sidebar = () => {
@@ -120,7 +125,9 @@ const Sidebar = () => {
 	};
 	const selectedKey = useMemo(() => {
 		// console.log(location.pathname);
-		const item = arrContent.find((item) => location.pathname == item.url);
+		const item = arrContent.find(
+			(item) => location.pathname == item.url || location.pathname.includes(`${item.url}/`),
+		);
 		if (item) {
 			return item.key;
 		}
@@ -130,7 +137,9 @@ const Sidebar = () => {
 
 	const selectedSub = useMemo(() => {
 		// console.log(location.pathname);
-		const item = arrContent.find((item) => location.pathname == item.url);
+		const item = arrContent.find(
+			(item) => location.pathname == item.url || location.pathname.includes(`${item.url}/`),
+		);
 		if (item && item.sub) {
 			return item.sub;
 		}

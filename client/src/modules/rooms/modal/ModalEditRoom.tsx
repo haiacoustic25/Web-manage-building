@@ -18,11 +18,11 @@ const ModalEditRoom = ({ isModalOpen, handleCancel, room }: Props) => {
 	const [form] = Form.useForm();
 	const [handleEdit, resultEdit] = useEditRoomMutation();
 	const numberOfFloor = useAppSelector((state: RootState) => state.buildingId.numberOfFloors);
-	console.log({ room });
 	const onFinish = (value: any) => {
 		handleEdit({
 			id: room.id,
 			...value,
+			limitPeople: Number(value.limitPeople),
 			area: Number(value.area),
 			motorbikeAmount: Number(value.motorbikeAmount),
 			payment: Number(value.payment),
@@ -141,6 +141,14 @@ const ModalEditRoom = ({ isModalOpen, handleCancel, room }: Props) => {
 					<Form.Item
 						label="Số lượng xe máy"
 						name="motorbikeAmount"
+						rules={[{ required: true, message: "Không được để trống" }]}
+						style={{ marginBottom: "12px" }}
+					>
+						<Input type="number" />
+					</Form.Item>
+					<Form.Item
+						label="Giới hạn người ở"
+						name="limitPeople"
 						rules={[{ required: true, message: "Không được để trống" }]}
 						style={{ marginBottom: "12px" }}
 					>

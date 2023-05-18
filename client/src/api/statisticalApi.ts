@@ -82,4 +82,5 @@ export const {
 	useGetStatisticalReportQuery,
 	useGetStatisticalRoomQuery,
 	useGetStatisticalRevenueQuery,
+	useLazyGetStatisticalRevenueQuery,
 } = statisticalApi;

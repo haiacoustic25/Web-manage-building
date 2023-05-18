@@ -7,6 +7,7 @@ const routerStatistical = require('./statistical.route');
 const routerBooking = require('./booking.route');
 const routerFurniture = require('./furniture.route');
 const routerHistory = require('./historyEmail.route');
+const routerDebt = require('./debt.router');
 
 const ApiRouter = (app) => {
   app.use('/api/user', routerUser);
@@ -18,6 +19,7 @@ const ApiRouter = (app) => {
   app.use('/api/booking', routerBooking);
   app.use('/api/furniture', routerFurniture);
   app.use('/api/history', routerHistory);
+  app.use('/api/debt', routerDebt);
 };
 
 module.exports = ApiRouter;

@@ -59,6 +59,21 @@ const SettingComponent = lazy(() =>
 		default: SettingComponent,
 	})),
 );
+const PageCreateRoom = lazy(() =>
+	import("../modules/rooms/PageCreateRoom").then(({ PageCreateRoom }) => ({
+		default: PageCreateRoom,
+	})),
+);
+const DebtComponent = lazy(() =>
+	import("../modules/debt").then(({ DebtComponent }) => ({
+		default: DebtComponent,
+	})),
+);
+const PageDetailDebt = lazy(() =>
+	import("../modules/debt/PageDetailDebt").then(({ PageDetailDebt }) => ({
+		default: PageDetailDebt,
+	})),
+);
 
 export const url = {
 	login: "/login",
@@ -73,6 +88,9 @@ export const url = {
 	furnitureManager: "/furniture",
 	history: "/history",
 	setting: "/setting",
+	createRoom: "/room/create",
+	debt: "/debt",
+	detailDebt: "/debt/:roomId",
 };
 
 export const RouterPublic: RouterType[] = [
@@ -91,4 +109,7 @@ export const RouterAdmin: RouterType[] = [
 	{ url: url.furnitureManager, element: <FurnitureComponent /> },
 	{ url: url.history, element: <HistoryEmailComponent /> },
 	{ url: url.setting, element: <SettingComponent /> },
+	{ url: url.createRoom, element: <PageCreateRoom /> },
+	{ url: url.debt, element: <DebtComponent /> },
+	{ url: url.detailDebt, element: <PageDetailDebt /> },
 ];

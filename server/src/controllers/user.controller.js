@@ -195,7 +195,6 @@ const update = async (req, res) => {
       permanentAddress,
       phone,
     };
-    console.log({ dataUpdate });
     if (req && req.file) {
       dataUpdate.avatar = req.file.filename;
     }

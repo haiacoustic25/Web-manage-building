@@ -16,7 +16,9 @@ const router = express.Router();
 
 // router.post("/create", verifyToken, buildingController.create);
 router.post('/getAllRoomByBuildingId', verifyToken, roomController.getAllRooms);
+router.post('/create', verifyToken, roomController.create);
 router.post('/update', verifyToken, roomController.update);
+router.delete('/delete', verifyToken, roomController.destroy);
 router.post('/createCustomer', verifyToken, upload.single('file'), roomController.createCustomer);
 // router.delete("/delete", verifyToken, roomController.deleteBuilding);
 

@@ -5,9 +5,7 @@ const { statusBuilding, statusRoom, statusCustomer } = require('../constants/sta
 const prisma = new PrismaClient();
 const RoomModel = prisma.room;
 const CustomerModel = prisma.customer;
-
 const setStatusRoom = async (roomId) => {
-  console.log({ roomId });
   try {
     const totalPeople = await prisma.$queryRaw`
       SELECT COUNT(manage_building.customer.id) as totalPeople
@@ -41,7 +39,6 @@ const setStatusRoom = async (roomId) => {
 };
 
 const setStatusBuilding = async (buildingId) => {
-  console.log({ buildingId });
   try {
     const listStatusRoom = await prisma.$queryRaw`
       SELECT manage_building.room.status as status
@@ -64,6 +61,55 @@ const setStatusBuilding = async (buildingId) => {
   `;
   } catch (error) {
     console.log({ error });
+  }
+};
+
+const create = async (req, res) => {
+  const {
+    buildingId,
+    name,
+    payment,
+    area,
+    motorbikeAmount,
+    environmentFee,
+    internetFee,
+    domesticWaterFee,
+    electricFee,
+    floor,
+  } = req.body;
+  try {
+    const id = uuidv4();
+    const dataCreate = {
+      id,
+      name,
+      payment,
+      area,
+      motorbikeAmount,
+      environmentFee,
+      internetFee,
+      domesticWaterFee,
+      electricFee,
+      floor,
+      buildingId: String(buildingId),
+    };
+    console.log({ dataCreate });
+    const result = await RoomModel.create({ data: dataCreate });
+    if (!result) return res.status(500).json({ success: false });
+
+    const totalRooms = await prisma.$queryRaw`
+      SELECT COUNT(id) as totalRoom 
+      FROM manage_building.room
+      where buildingId = ${buildingId}
+    `;
+    await prisma.$queryRaw`
+      UPDATE manage_building.building
+      SET amountRooms = ${Number(totalRooms[0].totalRoom)}
+      WHERE id = ${buildingId}
+    `;
+    return res.status(200).json({ success: true, message: 'Create successfully!!!', data: result });
+  } catch (error) {
+    console.log({ error });
+    return res.status(500).json({ error: error });
   }
 };
 
@@ -104,6 +150,7 @@ const update = async (req, res) => {
     furniture,
     dateStart,
     dateEnd,
+    limitPeople,
   } = req.body;
   try {
     const result = await RoomModel.update({
@@ -117,6 +164,7 @@ const update = async (req, res) => {
         internetFee,
         domesticWaterFee,
         floor,
+        limitPeople,
         furniture: JSON.stringify(furniture),
         dateStart: new Date(dateStart),
         dateEnd: new Date(dateEnd),
@@ -200,6 +248,36 @@ const createCustomer = async (req, res) => {
   }
 };
 
-const RoomController = { getAllRooms, update, createCustomer };
+const destroy = async (req, res) => {
+  const { id, buildingId } = req.body;
+  try {
+    const result = await RoomModel.delete({
+      where: { id: id },
+    });
+
+    if (!result) return res.status(201).json({ success: false });
+
+    const totalRooms = await prisma.$queryRaw`
+      SELECT COUNT(id) as totalRoom 
+      FROM manage_building.room
+      where buildingId = ${buildingId}
+    `;
+    await prisma.$queryRaw`
+      UPDATE manage_building.building
+      SET amountRooms = ${Number(totalRooms[0].totalRoom)}
+      WHERE id = ${buildingId}
+    `;
+    return res.status(200).json({
+      success: true,
+      message: 'Delete successfully !!!',
+      //   data: result,
+    });
+  } catch (error) {
+    console.log({ error });
+    return res.status(500).json({ error: error });
+  }
+};
+
+const RoomController = { create, getAllRooms, update, createCustomer, destroy };
 
 module.exports = RoomController;

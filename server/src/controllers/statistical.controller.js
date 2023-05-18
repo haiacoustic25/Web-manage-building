@@ -189,15 +189,6 @@ const statisticalReport = async (req, res) => {
 const statisticalRevenue = async (req, res) => {
   const { dateStart, dateEnd, buildingId } = req.body;
   try {
-    // const monthStart = dateStart.getMonth() + 1;
-    // const monthEnd = dateEnd.getMonth() + 1;
-    const monthStart = 1;
-    const monthEnd = 4;
-
-    // const arrMonth = Array.from({ length: monthEnd }, (_, i) => i + 1 >= monthStart);
-
-    // const arrMonth = Array.from(Array(4).keys());
-    // console.log({ arrMonth });
     const result = await prisma.$queryRaw`
       SELECT manage_building.report.totalPayment,
       manage_building.report.createAt
@@ -223,9 +214,13 @@ const statisticalRevenue = async (req, res) => {
       };
     });
 
+    // console.log(reduced);
     const data = reduced
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .filter((_, index) => index < 6);
+      .filter(
+        (_) =>
+          new Date(_.createdAt) <= new Date(dateEnd) && new Date(_.createdAt) >= new Date(dateStart)
+      );
     // console.log(data);
     return res.status(200).json({ success: true, data: data });
   } catch (error) {

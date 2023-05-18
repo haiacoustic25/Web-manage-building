@@ -5,12 +5,14 @@ import {
 	SearchOutlined,
 	DollarOutlined,
 	UsergroupAddOutlined,
+	PlusCircleOutlined,
+	DeleteOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Dropdown, Form, Input, Row, Select, Space, Tooltip } from "antd";
+import { Button, Col, Dropdown, Form, Input, Modal, Row, Select, Space, Tooltip } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { useGetAllRoomQuery } from "../../api/roomApi";
+import { useGetAllRoomQuery, useRemoveRoomMutation } from "../../api/roomApi";
 import SearchWrapper from "../../components/searchWrapper";
 import { RootState, useAppSelector } from "../../redux/store";
 import { RoomType } from "../../types/BuildingType";
@@ -19,6 +21,9 @@ import ModalCustomer from "./modal/ModalCustomer";
 import ModalEditRoom from "./modal/ModalEditRoom";
 import PaymentComponent from "./Drawer/PaymentComponent";
 import formatDate from "../../utils/formatDate";
+import { useNavigate } from "react-router-dom";
+import { url } from "../../routes/listRouter";
+import { toast } from "react-toastify";
 
 interface DataType {
 	key: string;
@@ -35,6 +40,9 @@ interface DataType {
 
 const Mainsection = () => {
 	const [form] = Form.useForm();
+	const { confirm } = Modal;
+	const [handleRemove, resultRemove] = useRemoveRoomMutation();
+	const navigation = useNavigate();
 	const [isOpenPayment, setIsOpenPayment] = useState<boolean>(false);
 	const buildingId = useAppSelector((state: RootState) => state.buildingId.buildingId);
 	const [isModalOpenAdd, setIsModalOpenAdd] = useState(false);
@@ -197,6 +205,7 @@ const Mainsection = () => {
 			key: "action",
 			align: "right",
 			width: "50px",
+
 			render: (_, record) => (
 				<Space size="middle">
 					<Dropdown menu={{ items: items(record) }} placement="bottomLeft" arrow>
@@ -206,6 +215,28 @@ const Mainsection = () => {
 			),
 		},
 	];
+
+	const showConfirm = (item: any) => {
+		confirm({
+			title: "Xóa",
+			icon: <DeleteOutlined style={{ color: "red" }} />,
+			content: "Bạn có muốn xóa không?",
+			okText: "Đồng ý",
+			// confirmLoading:isLoading,
+			cancelText: "Hủy",
+			onOk() {
+				handleRemove({ id: item.id, buildingId });
+			},
+			onCancel() {
+				console.log("Cancel");
+			},
+		});
+	};
+
+	useEffect(() => {
+		if (resultRemove.isSuccess) toast.success("Xóa phòng trọ thành công");
+		if (resultRemove.isError) toast.error("Xóa phòng trọ thất bại");
+	}, [resultRemove]);
 
 	const items = (item: any) => {
 		return [
@@ -221,6 +252,7 @@ const Mainsection = () => {
 				key: "2",
 				icon: <UsergroupAddOutlined />,
 				label: "Thêm thành viên",
+				disabled: item.amountOfPeople <= item.limitPeople ? false : true,
 				onClick: () => {
 					_showModalCustomer();
 					setRoomSelect(item);
@@ -235,7 +267,22 @@ const Mainsection = () => {
 					setRoomSelect(item);
 				},
 			},
+			{
+				key: "4",
+				icon: <DeleteOutlined style={{ color: "red" }} />,
+				label: "Xóa",
+				disabled: item.status != 1 ? true : false,
+				onClick: () => {
+					showConfirm(item);
+					// _showModal();
+					// setRoomSelect(item);
+				},
+			},
 		];
+	};
+
+	const _handleAddRoom = () => {
+		navigation(url.createRoom);
 	};
 
 	const renderContent = () => {
@@ -327,16 +374,26 @@ const Mainsection = () => {
 					</Form>
 				</div>
 			</SearchWrapper>
-			<Table
-				columns={columns}
-				dataSource={renderContent()}
-				loading={isFetching}
-				bordered
-				rowClassName={(record, index) =>
-					index % 2 === 0 ? "table-row-light" : "table-row-dark"
-				}
-				// scroll={{ y: 395 }}
-			/>
+			<div className="customer-content">
+				<Button
+					type="primary"
+					icon={<PlusCircleOutlined />}
+					className="customer-content__add"
+					onClick={_handleAddRoom}
+				>
+					Thêm
+				</Button>
+				<Table
+					columns={columns}
+					dataSource={renderContent()}
+					loading={isFetching}
+					bordered
+					rowClassName={(record, index) =>
+						index % 2 === 0 ? "table-row-light" : "table-row-dark"
+					}
+					// scroll={{ y: 395 }}
+				/>
+			</div>
 			<ModalEditRoom
 				isModalOpen={isModalOpenAdd}
 				room={roomSelect}
