@@ -34,15 +34,6 @@ interface DataType {
 export const PageDetailDebt = () => {
 	const { roomId } = useParams();
 	const { confirm } = Modal;
-	const buildingId = useAppSelector((state: RootState) => state.buildingId.buildingId);
-	const { data: dataRoom } = useGetAllRoomQuery({
-		buildingId,
-		priceFrom: "",
-		priceTo: "",
-		areaFrom: "",
-		areaTo: "",
-		status: "",
-	});
 	const navigation = useNavigate();
 	const [isModalOpenAdd, setIsModalOpenAdd] = useState<boolean>(false);
 	const { data, isFetching } = useFindDebtByRoomIdQuery(roomId);
